@@ -5,24 +5,50 @@
     font-stretch: 75% 125%;
 }
 
+:root {
+    --white: #e8eaed;
+    --header-height: 4rem;
+}
+
 html, body {
     font-family: "Mona Sans";
+    color: var(--white);
+}
+
+button {
+    all: unset;
 }
 
 header {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    height: 5rem;
+    height: var(--header-height);
     padding: 1rem;
-    background-color: green;
+    background-color: #333;
 }
 
 section {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 7rem);
+    height: calc(100% - var(--header-height) - 2rem);
 }
+
+.button-noborder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 1rem;
+}
+
+    .button-noborder:hover {
+        background-color: #6666;
+    }
+
+    .button-noborder.active {
+        background-color: #666;
+    }
 
 menu {
     display: flex;
@@ -35,28 +61,15 @@ menu {
 }
 
     menu li {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         flex-grow: 0;
         flex-shrink: 0;
         flex-basis: 10rem;
         height: 5.5rem;
-        cursor: pointer;
         padding: 0 2rem;
-        border-radius: 1rem;
     }
 
-        menu li:hover {
-            background-color: #6666;
-        }
-
-        menu li.active {
-            background-color: #666;
-        }
-
 main {
-    background-color: darkslateblue;
+    background-color: #444;
     flex: 1;
 }
 
@@ -70,6 +83,41 @@ h1 {
 h2.symbols {
     text-align: center;
     display: none;
+}
+
+.align-right {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.toolbar {
+    display: none;
+    margin-left: 2rem;
+}
+
+    .toolbar button {
+        padding: 1rem;
+    }
+
+        .toolbar button img {
+
+        }
+
+        .toolbar button span {
+            margin: 0 1rem;
+            font-size: 125%;
+        }
+
+.vertical-line {
+    width: 2px;
+    height: 80%;
+    background-color: var(--white);
+    margin: 1rem;
+    flex-shrink: 0;
+}
+
+.burger {
+    padding: 1rem;
 }
 
 @media (min-width: 800px) {
@@ -90,9 +138,40 @@ h2.symbols {
     }
 }
 
+.screen-wide, .screen-medium {
+    display: none;
+}
+
+@media (min-width: 1620px) {
+    .screen-wide {
+        display: block;
+    }
+}
+
+@media (min-width: 1270px) {
+    .screen-medium {
+        display: block;
+    }
+}
+
+@media (min-width: 1140px) {
+    .burger {
+        display: none;
+    }
+
+    .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 5rem;
+        background-color: #333;
+    }
+}
+
 .terminal {
     width: 225px;
-    border: 3px solid white;
+    border: 3px solid var(--white);
     line-height: 70px;
     text-align: center;
     border-radius: 2rem;
@@ -100,7 +179,8 @@ h2.symbols {
 
 .process {
     width: 225px;
-    border: 3px solid white;
+    border: 3px solid var(--white);
+    border-radius: 5px;
     line-height: 70px;
     text-align: center;
 }
@@ -112,7 +192,7 @@ h2.symbols {
 .line {
     margin-top: 8px;
     width: 140px;
-    background: white;
+    background: var(--white);
     height: 4px;
     float: left;
 }
@@ -122,13 +202,13 @@ h2.symbols {
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 20px solid white;
+    border-left: 20px solid var(--white);
     float: right;
 }
 
 .parallelogram {
     width: 200px;
-    border: 3px solid white;
+    border: 3px solid var(--white);
     border-radius: 5px;
     transform: skewX(-20deg);
 }
@@ -136,7 +216,7 @@ h2.symbols {
     .parallelogram span {
         display: block;
         transform: skewX(20deg);
-        color: white;
+        color: var(--white);
         text-align: center;
         line-height: 70px;
     }
@@ -144,7 +224,7 @@ h2.symbols {
 .rhombus {
     width: 140px;
     height: 140px;
-    border: 6px solid white;
+    border: 6px solid var(--white);
     border-radius: 5px;
     transform: scale(1, 0.4) rotate(45deg);
     overflow: hidden;
@@ -156,5 +236,5 @@ h2.symbols {
         justify-content: center;
         height: 100%;
         transform: rotate(-45deg) scaleY(2.5);
-        color: white;
+        color: var(--white);
     }
