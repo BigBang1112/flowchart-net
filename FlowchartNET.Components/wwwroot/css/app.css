@@ -1,0 +1,154 @@
+html {
+    background-color: darkslateblue;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 5rem;
+    padding: 1rem;
+    background-color: green;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 7rem);
+}
+
+menu {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+    background-color: #222;
+    overflow: auto;
+    align-content: flex-start;
+}
+
+    menu li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: 10rem;
+        height: 5.5rem;
+        cursor: pointer;
+        padding: 0 2rem;
+        border-radius: 1rem;
+    }
+
+        menu li:hover {
+            background-color: #6666;
+        }
+
+        menu li.active {
+            background-color: #666;
+        }
+
+main {
+    background-color: darkslateblue;
+    padding: 1rem;
+    flex: 1;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 1rem;
+}
+
+h2.symbols {
+    text-align: center;
+    display: none;
+}
+
+@media (min-width: 800px) {
+    section {
+        flex-direction: row;
+    }
+
+    menu {
+        flex-direction: column;
+    }
+
+        menu li {
+            flex-basis: auto;
+        }
+
+    h2.symbols {
+        display: block;
+    }
+}
+
+.terminal {
+    width: 225px;
+    border: 3px solid white;
+    line-height: 70px;
+    text-align: center;
+    border-radius: 2rem;
+}
+
+.process {
+    width: 225px;
+    border: 3px solid white;
+    line-height: 70px;
+    text-align: center;
+}
+
+.flowline {
+    width: 160px;
+}
+
+.line {
+    margin-top: 8px;
+    width: 140px;
+    background: white;
+    height: 4px;
+    float: left;
+}
+
+.point {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 20px solid white;
+    float: right;
+}
+
+.parallelogram {
+    width: 200px;
+    border: 3px solid white;
+    border-radius: 5px;
+    transform: skewX(-20deg);
+}
+
+    .parallelogram span {
+        display: block;
+        transform: skewX(20deg);
+        color: white;
+        text-align: center;
+        line-height: 70px;
+    }
+
+.rhombus {
+    width: 140px;
+    height: 140px;
+    border: 6px solid white;
+    border-radius: 5px;
+    transform: scale(1, 0.4) rotate(45deg);
+    overflow: hidden;
+}
+
+    .rhombus span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        transform: rotate(-45deg) scaleY(2.5);
+        color: white;
+    }
