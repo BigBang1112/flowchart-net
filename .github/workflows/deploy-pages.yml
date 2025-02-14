@@ -3,7 +3,7 @@ name: Deploy to Pages
 on:
   push:
     branches: [ "main" ]
-    paths: [ ".github/workflows/ci.yml", "FlowchartNET/**", "FlowchartNET.Components/**", "FlowchartNET.sln" ]
+    paths: [ ".github/workflows/deploy-pages.yml", "FlowchartNET/**", "FlowchartNET.Components/**", "FlowchartNET.sln" ]
   workflow_dispatch:
 
 permissions:
