@@ -1,0 +1,10 @@
+﻿<div style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
+    <div class="symbol-decision">
+        <span>Decision</span>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required DecisionSymbolData Data { get; set; }
+}

@@ -67,12 +67,14 @@ menu {
         flex-basis: 10rem;
         height: 5.5rem;
         padding: 0 2rem;
+        width: 13rem;
     }
 
 main {
     position: relative;
-    background-color: #444;
+    overflow: auto;
     flex: 1;
+    background-color: #444;
 }
 
 h1 {

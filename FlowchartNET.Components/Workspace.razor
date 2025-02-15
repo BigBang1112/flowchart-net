@@ -4,9 +4,7 @@
 <main @ondragover="OnDragOver" @ondragover:preventDefault="true">
     @foreach (var symbol in symbols)
     {
-        <div class="symbol" style="position: absolute; left: @(symbol.X)px; top: @(symbol.Y)px;">
-            Symblol
-        </div>
+        <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
     }
 </main>
 
@@ -15,7 +13,7 @@
 
     private DotNetObjectReference<Workspace>? objRef;
 
-    private List<SymbolInfo> symbols = [];
+    private List<SymbolData> symbols = [];
 
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
@@ -38,9 +36,30 @@
     [JSInvokable]
     public void AddSymbol(string symbolId, double x, double y)
     {
-        symbols.Add(new SymbolInfo { X = x, Y = y });
+        switch (symbolId)
+        {
+            case "symbol-terminal":
+                symbols.Add(new StartSymbolData { X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2), Y = y });
+                symbols.Add(new EndSymbolData { X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2), Y = y + 100 });
+                break;
+            case "symbol-process":
+                symbols.Add(new ProcessSymbolData { X = Math.Max(0, x - ProcessSymbolData.DefaultWidth / 2), Y = y });
+                break;
+            case "symbol-io":
+                symbols.Add(new IOSymbolData { X = Math.Max(0, x - IOSymbolData.DefaultWidth / 2), Y = y });
+                break;
+            case "symbol-decision":
+                symbols.Add(new DecisionSymbolData { X = Math.Max(0, x - DecisionSymbolData.DefaultWidth / 2), Y = y });
+                break;
+        }
         StateHasChanged();
     }
+
+    private Dictionary<string, object> GetSymbolComponentParameters(SymbolData data) =>
+        new Dictionary<string, object>
+        {
+            { "Data", data }
+        };
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
