@@ -40,6 +40,7 @@ section {
     justify-content: center;
     cursor: pointer;
     border-radius: 1rem;
+    transition: background-color 0.05s ease;
 }
 
     .button-noborder:hover {
@@ -78,6 +79,7 @@ h1 {
     align-items: center;
     gap: 1rem;
     margin: 0 1rem;
+    outline: none;
 }
 
 h2.symbols {
@@ -88,32 +90,6 @@ h2.symbols {
 .align-right {
     margin-left: auto;
     margin-right: 0;
-}
-
-.toolbar {
-    display: none;
-    margin-left: 2rem;
-}
-
-    .toolbar button {
-        padding: 1rem;
-    }
-
-        .toolbar button img {
-
-        }
-
-        .toolbar button span {
-            margin: 0 1rem;
-            font-size: 125%;
-        }
-
-.vertical-line {
-    width: 2px;
-    height: 80%;
-    background-color: var(--white);
-    margin: 1rem;
-    flex-shrink: 0;
 }
 
 .burger {
@@ -158,83 +134,5 @@ h2.symbols {
     .burger {
         display: none;
     }
-
-    .toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 5rem;
-        background-color: #333;
-    }
 }
 
-.terminal {
-    width: 225px;
-    border: 3px solid var(--white);
-    line-height: 70px;
-    text-align: center;
-    border-radius: 2rem;
-}
-
-.process {
-    width: 225px;
-    border: 3px solid var(--white);
-    border-radius: 5px;
-    line-height: 70px;
-    text-align: center;
-}
-
-.flowline {
-    width: 160px;
-}
-
-.line {
-    margin-top: 8px;
-    width: 140px;
-    background: var(--white);
-    height: 4px;
-    float: left;
-}
-
-.point {
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 20px solid var(--white);
-    float: right;
-}
-
-.parallelogram {
-    width: 200px;
-    border: 3px solid var(--white);
-    border-radius: 5px;
-    transform: skewX(-20deg);
-}
-
-    .parallelogram span {
-        display: block;
-        transform: skewX(20deg);
-        color: var(--white);
-        text-align: center;
-        line-height: 70px;
-    }
-
-.rhombus {
-    width: 140px;
-    height: 140px;
-    border: 6px solid var(--white);
-    border-radius: 5px;
-    transform: scale(1, 0.4) rotate(45deg);
-    overflow: hidden;
-}
-
-    .rhombus span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        transform: rotate(-45deg) scaleY(2.5);
-        color: var(--white);
-    }

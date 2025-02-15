@@ -1,0 +1,13 @@
+<li class="button-noborder">
+    <div class="@SymbolClass">
+        @ChildContent
+    </div>
+</li>
+
+@code {
+    [Parameter, EditorRequired]
+    public string SymbolClass { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public RenderFragment? ChildContent { get; set; }
+}

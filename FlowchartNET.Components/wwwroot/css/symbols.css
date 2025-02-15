@@ -1,0 +1,69 @@
+.terminal {
+    width: 225px;
+    border: 3px solid var(--white);
+    line-height: 70px;
+    text-align: center;
+    border-radius: 2rem;
+}
+
+.process {
+    width: 225px;
+    border: 3px solid var(--white);
+    border-radius: 5px;
+    line-height: 70px;
+    text-align: center;
+}
+
+.flowline {
+    width: 160px;
+}
+
+.line {
+    margin-top: 8px;
+    width: 140px;
+    background: var(--white);
+    height: 4px;
+    float: left;
+}
+
+.point {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 20px solid var(--white);
+    float: right;
+}
+
+.parallelogram {
+    width: 200px;
+    border: 3px solid var(--white);
+    border-radius: 5px;
+    transform: skewX(-20deg);
+}
+
+    .parallelogram span {
+        display: block;
+        transform: skewX(20deg);
+        color: var(--white);
+        text-align: center;
+        line-height: 70px;
+    }
+
+.rhombus {
+    width: 140px;
+    height: 140px;
+    border: 6px solid var(--white);
+    border-radius: 5px;
+    transform: scale(1, 0.4) rotate(45deg);
+    overflow: hidden;
+}
+
+    .rhombus span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        transform: rotate(-45deg) scaleY(2.5);
+        color: var(--white);
+    }

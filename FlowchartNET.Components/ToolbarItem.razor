@@ -1,0 +1,48 @@
+<button class="button-noborder @AdditionalCssClass" @attributes="AdditionalAttributes">
+    <img src="_content/FlowchartNET.Components/img/@ImageUrl" alt="@ImageAlt" width="@ImageWidth" height="@ImageHeight" />
+    @ChildContent
+</button>
+
+@code {
+    /// <summary>
+    /// The URL for the toolbar icon image relative to the 'img' folder.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string ImageUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Optional alternate text for the image.
+    /// </summary>
+    [Parameter]
+    public string? ImageAlt { get; set; }
+
+    /// <summary>
+    /// Image width (default is 48).
+    /// </summary>
+    [Parameter]
+    public int ImageWidth { get; set; } = 48;
+
+    /// <summary>
+    /// Image height (default is 48).
+    /// </summary>
+    [Parameter]
+    public int ImageHeight { get; set; } = 48;
+
+    /// <summary>
+    /// Optional child content (e.g. a span containing text).
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Additional attributes that will be applied to the button.
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
+
+    /// <summary>
+    /// Optional additional CSS classes.
+    /// </summary>
+    [Parameter]
+    public string AdditionalCssClass { get; set; } = "";
+}
