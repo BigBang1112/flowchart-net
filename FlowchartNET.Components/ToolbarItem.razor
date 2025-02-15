@@ -1,5 +1,5 @@
-<button class="button-noborder @AdditionalCssClass" @attributes="AdditionalAttributes">
-    <img src="_content/FlowchartNET.Components/img/@ImageUrl" alt="@ImageAlt" width="@ImageWidth" height="@ImageHeight" />
+<button class="button-noborder @AdditionalCssClass">
+    <img src="_content/FlowchartNET.Components/img/icons/@ImageUrl" alt="@ImageAlt" draggable="false" width="@ImageWidth" height="@ImageHeight" />
     @ChildContent
 </button>
 
@@ -33,12 +33,6 @@
     /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
-
-    /// <summary>
-    /// Additional attributes that will be applied to the button.
-    /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
 
     /// <summary>
     /// Optional additional CSS classes.

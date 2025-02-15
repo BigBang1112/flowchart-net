@@ -1,4 +1,4 @@
-.terminal {
+.symbol-terminal {
     width: 225px;
     border: 3px solid var(--white);
     line-height: 70px;
@@ -6,7 +6,7 @@
     border-radius: 2rem;
 }
 
-.process {
+.symbol-process {
     width: 225px;
     border: 3px solid var(--white);
     border-radius: 5px;
@@ -14,7 +14,7 @@
     text-align: center;
 }
 
-.flowline {
+.symbol-flowline {
     width: 160px;
 }
 
@@ -35,14 +35,14 @@
     float: right;
 }
 
-.parallelogram {
+.symbol-io {
     width: 200px;
     border: 3px solid var(--white);
     border-radius: 5px;
     transform: skewX(-20deg);
 }
 
-    .parallelogram span {
+    .symbol-io span {
         display: block;
         transform: skewX(20deg);
         color: var(--white);
@@ -50,7 +50,7 @@
         line-height: 70px;
     }
 
-.rhombus {
+.symbol-decision {
     width: 140px;
     height: 140px;
     border: 6px solid var(--white);
@@ -59,7 +59,7 @@
     overflow: hidden;
 }
 
-    .rhombus span {
+    .symbol-decision span {
         display: flex;
         align-items: center;
         justify-content: center;

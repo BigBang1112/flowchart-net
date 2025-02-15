@@ -1,25 +1,19 @@
 <menu>
     <h2 class="symbols">Symbols</h2>
-    <MenuItem SymbolClass="terminal">
-        <span>Start</span>
-    </MenuItem>
-    <MenuItem SymbolClass="terminal">
-        <span>End</span>
-    </MenuItem>
-    <MenuItem SymbolClass="flowline">
+    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItem" IsSelected="@IsSelected("Start / End")" />
+    <MenuItem SymbolClass="symbol-flowline" Name="Flowline" IsNameVisible="false" OnMouseDown="SelectItem" IsSelected="@IsSelected("Flowline")">
         <div class="line"></div>
         <div class="point"></div>
     </MenuItem>
-    <MenuItem SymbolClass="process">
-        <span>Process</span>
-    </MenuItem>
-    <MenuItem SymbolClass="parallelogram">
-        <span>Input</span>
-    </MenuItem>
-    <MenuItem SymbolClass="parallelogram">
-        <span>Output</span>
-    </MenuItem>
-    <MenuItem SymbolClass="rhombus">
-        <span>Decision</span>
-    </MenuItem>
+    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItem" IsSelected="@IsSelected("Process")" />
+    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItem" IsSelected="@IsSelected("Input / Output")" />
+    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItem" IsSelected="@IsSelected("Decision")" />
 </menu>
+
+@code {
+    private string? SelectedItem { get; set; }
+
+    private void SelectItem(string name) => SelectedItem = name;
+
+    private bool IsSelected(string identifier) => SelectedItem == identifier;
+}

@@ -70,6 +70,7 @@ menu {
     }
 
 main {
+    position: relative;
     background-color: #444;
     flex: 1;
 }

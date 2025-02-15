@@ -1,0 +1,58 @@
+﻿@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<main @ondragover="OnDragOver" @ondragover:preventDefault="true">
+    @foreach (var symbol in symbols)
+    {
+        <div class="symbol" style="position: absolute; left: @(symbol.X)px; top: @(symbol.Y)px;">
+            Symblol
+        </div>
+    }
+</main>
+
+@code {
+    private IJSObjectReference? module;
+
+    private DotNetObjectReference<Workspace>? objRef;
+
+    private List<SymbolInfo> symbols = [];
+
+    protected override void OnInitialized() =>
+        objRef = DotNetObjectReference.Create(this);
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import",
+                "./_content/FlowchartNET.Components/Workspace.razor.js");
+            await module.InvokeVoidAsync("addHandlers", objRef);
+        }
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        // prevent default behavior
+    }
+
+    [JSInvokable]
+    public void AddSymbol(string symbolId, double x, double y)
+    {
+        symbols.Add(new SymbolInfo { X = x, Y = y });
+        StateHasChanged();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module is not null)
+        {
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
+}

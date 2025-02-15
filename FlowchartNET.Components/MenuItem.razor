@@ -1,13 +1,63 @@
-<li class="button-noborder">
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+
+<li @ref="button" class="button-noborder @(IsSelected ? "active" : "")" 
+    draggable="true"
+    @onmousedown="() => OnMouseDown.InvokeAsync(Name)">
     <div class="@SymbolClass">
         @ChildContent
+        @if (!string.IsNullOrWhiteSpace(Name) && IsNameVisible)
+        {
+            <span>@Name</span>
+        }
     </div>
 </li>
 
 @code {
+    private IJSObjectReference? module;
+
+    private ElementReference button;
+
     [Parameter, EditorRequired]
     public string SymbolClass { get; set; } = string.Empty;
 
     [Parameter, EditorRequired]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsNameVisible { get; set; } = true;
+
+    [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    [Parameter, EditorRequired]
+    public bool IsSelected { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<string> OnMouseDown { get; set; }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import",
+                "./_content/FlowchartNET.Components/MenuItem.razor.js");
+            await module.InvokeVoidAsync("addHandlers", button, SymbolClass);
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module is not null)
+        {
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
 }
