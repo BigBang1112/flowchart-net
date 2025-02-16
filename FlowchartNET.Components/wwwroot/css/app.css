@@ -25,6 +25,7 @@ header {
     flex-shrink: 0;
     height: var(--header-height);
     background-color: #333;
+    transition: all 0.2s ease;
 }
 
 section {
@@ -87,11 +88,13 @@ h1 {
     margin: 0 1rem;
     outline: none;
     font-size: 150%;
+    transition: all 0.2s ease;
 }
 
 img.flowchart-icon {
     width: 48px;
     height: 48px;
+    transition: all 0.2s ease;
 }
 
 @media (min-width: 500px) {
