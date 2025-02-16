@@ -24,7 +24,6 @@ header {
     align-items: center;
     flex-shrink: 0;
     height: var(--header-height);
-    padding: 1rem;
     background-color: #333;
 }
 
@@ -87,6 +86,27 @@ h1 {
     gap: 1rem;
     margin: 0 1rem;
     outline: none;
+    font-size: 150%;
+}
+
+img.flowchart-icon {
+    width: 48px;
+    height: 48px;
+}
+
+@media (min-width: 500px) {
+    h1 {
+        font-size: 200%;
+    }
+
+    img.flowchart-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    header {
+        padding: 1rem;
+    }
 }
 
 h2.symbols {
@@ -97,10 +117,6 @@ h2.symbols {
 .align-right {
     margin-left: auto;
     margin-right: 0;
-}
-
-.burger {
-    padding: 1rem;
 }
 
 @media (min-width: 800px) {
