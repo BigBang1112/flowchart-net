@@ -1,10 +1,28 @@
-﻿<div class="symbol symbol-process symbol-hoverable" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
+﻿@implements IDraggable
+
+<div class="symbol symbol-process symbol-hoverable" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px; cursor: @(IsDragging ? "grabbing" : "grab");"
+     @onmousedown="MouseDownAsync"
+     @onmousedown:preventDefault="true">
     <span>Process</span>
     <div class="connect connect-top"></div>
     <div class="connect connect-bottom"></div>
 </div>
 
 @code {
+    public bool IsDragging { get; set; }
+
     [Parameter, EditorRequired]
     public required ProcessSymbolData Data { get; set; }
+
+    double IDraggable.X { get => Data.X; set => Data.X = value; }
+    double IDraggable.Y { get => Data.Y; set => Data.Y = value; }
+
+    [Parameter]
+    public EventCallback<SymbolDragEventArgs> OnMouseDown { get; set; }
+
+    private async Task MouseDownAsync(MouseEventArgs e)
+    {
+        IsDragging = true;
+        await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e));
+    }
 }

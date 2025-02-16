@@ -4,7 +4,7 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main @ondragover="OnDragOver" @onclick="OnClick" @ondragover:preventDefault="true">
+<main @ondragover="OnDragOver" @onclick="OnClick" @ondragover:preventDefault="true" @onmousemove="OnMouseMove" @onmouseup="OnMouseUp">
     @foreach (var symbol in AppState.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
@@ -15,6 +15,8 @@
     private IJSObjectReference? module;
 
     private DotNetObjectReference<Workspace>? objRef;
+
+    private IDraggable? currentlyDraggedSymbol;
 
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
@@ -90,8 +92,29 @@
     private Dictionary<string, object> GetSymbolComponentParameters(SymbolData data) =>
         new Dictionary<string, object>
         {
-            { "Data", data }
+            { "Data", data },
+            { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnMouseDown) }
         };
+
+    private void OnMouseDown(SymbolDragEventArgs e)
+    {
+        currentlyDraggedSymbol = e.Draggable;
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        if (currentlyDraggedSymbol is not null)
+        {
+            currentlyDraggedSymbol.X = WorkspaceModule.GetMouseX(e.ClientX) - 120;
+            currentlyDraggedSymbol.Y = WorkspaceModule.GetMouseY(e.ClientY) - 40;
+            StateHasChanged();
+        }
+    }
+
+    private void OnMouseUp()
+    {
+        currentlyDraggedSymbol = null;
+    }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {

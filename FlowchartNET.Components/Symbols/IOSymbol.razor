@@ -1,11 +1,30 @@
-﻿<div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
-    <div class="shape symbol-hoverable" style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px;"></div>
+﻿@implements IDraggable
+
+<div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
+    <div class="shape symbol-hoverable"
+         style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px; cursor: @(IsDragging ? "grabbing" : "grab");"
+        @onmousedown="MouseDownAsync"
+        @onmousedown:preventDefault="true"></div>
     <span>Input / Output</span>
     <div class="connect connect-top connect-top-io"></div>
     <div class="connect connect-bottom connect-bottom-io"></div>
 </div>
 
 @code {
+    public bool IsDragging { get; set; }
+
     [Parameter, EditorRequired]
     public required IOSymbolData Data { get; set; }
+
+    double IDraggable.X { get => Data.X; set => Data.X = value; }
+    double IDraggable.Y { get => Data.Y; set => Data.Y = value; }
+
+    [Parameter]
+    public EventCallback<SymbolDragEventArgs> OnMouseDown { get; set; }
+
+    private async Task MouseDownAsync(MouseEventArgs e)
+    {
+        IsDragging = true;
+        await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e));
+    }
 }

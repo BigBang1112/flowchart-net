@@ -99,7 +99,7 @@
 }
 
     .connect-bottom:hover {
-        border-bottom: 6px solid var(--white);
+        border-bottom: 7px solid var(--white);
     }
 
 .connect-top {
@@ -108,7 +108,7 @@
 }
 
     .connect-top:hover {
-        border-top: 6px solid var(--white);
+        border-top: 7px solid var(--white);
     }
 
 .connect-bottom-io {
