@@ -4,7 +4,7 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main @ondragover="OnDragOver" @onclick="OnClickAsync" @ondragover:preventDefault="true">
+<main @ondragover="OnDragOver" @onclick="OnClick" @ondragover:preventDefault="true">
     @foreach (var symbol in AppState.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
@@ -28,6 +28,8 @@
         {
             module = await JS.InvokeAsync<IJSObjectReference>("import",
                 "./_content/FlowchartNET.Components/Workspace.razor.js");
+            await JSHost.ImportAsync(nameof(WorkspaceModule),
+                "../_content/FlowchartNET.Components/Workspace.razor.js");
             await module.InvokeVoidAsync("addHandlers", objRef);
         }
     }
@@ -37,12 +39,12 @@
         // prevent default behavior
     }
 
-    private async Task OnClickAsync(MouseEventArgs e)
+    private void OnClick(MouseEventArgs e)
     {
         if (AppState.SelectedSymbolId is not null && module is not null)
         {
-            var mouseX = await module.InvokeAsync<int>("getMouseX", e);
-            var mouseY = await module.InvokeAsync<int>("getMouseY", e);
+            var mouseX = WorkspaceModule.GetMouseX(e.ClientX);
+            var mouseY = WorkspaceModule.GetMouseY(e.ClientY);
             AddSymbol(AppState.SelectedSymbolId, mouseX, mouseY);
         }
     }

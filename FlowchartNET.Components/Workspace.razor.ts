@@ -20,12 +20,12 @@ export function addHandlers(dotNetHelper: any): void {
     });
 }
 
-export function getMouseX(event: MouseEvent): number {
+export function getMouseX(clientX: number): number {
     const rect = main.getBoundingClientRect();
-    return event.clientX - rect.left;
+    return clientX - rect.left;
 }
 
-export function getMouseY(event: MouseEvent): number {
+export function getMouseY(clientY: number): number {
     const rect = main.getBoundingClientRect();
-    return event.clientY - rect.top;
+    return clientY - rect.top;
 }
