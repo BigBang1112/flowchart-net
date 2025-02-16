@@ -4,6 +4,14 @@
     justify-content: center;
 }
 
+.symbol-hoverable {
+    transition: background-color 0.2s ease;
+}
+
+    .symbol-hoverable:hover {
+        background-color: #FFF2;
+    }
+
 .symbol-terminal {
     width: 100%;
     border: 3px solid var(--white);
@@ -57,6 +65,7 @@
     .symbol-io span {
         position: absolute;
         text-align: center;
+        pointer-events: none;
     }
 
 .symbol-decision {
@@ -72,4 +81,5 @@
     .symbol-decision span {
         position: absolute;
         text-align: center;
+        pointer-events: none;
     }

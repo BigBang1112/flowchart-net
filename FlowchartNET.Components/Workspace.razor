@@ -2,9 +2,10 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject AppState AppState
+@inject EventBroadcastService EventBroadcast
 
 <main @ondragover="OnDragOver" @onclick="OnClickAsync" @ondragover:preventDefault="true">
-    @foreach (var symbol in symbols)
+    @foreach (var symbol in AppState.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
     }
@@ -15,7 +16,8 @@
 
     private DotNetObjectReference<Workspace>? objRef;
 
-    private List<SymbolData> symbols = [];
+    [Parameter]
+    public EventCallback OnSymbolAdd { get; set; }
 
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
@@ -51,39 +53,41 @@
         switch (symbolId)
         {
             case "symbol-terminal":
-                symbols.Add(new StartSymbolData
+                AppState.Symbols.Add(new StartSymbolData
                     {
                         X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2),
                         Y = y - EndSymbolData.DefaultHeight / 2
                     });
-                symbols.Add(new EndSymbolData
+                AppState.Symbols.Add(new EndSymbolData
                     {
                         X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2),
                         Y = y - EndSymbolData.DefaultHeight / 2 + 100
                     });
                 break;
             case "symbol-process":
-                symbols.Add(new ProcessSymbolData
+                AppState.Symbols.Add(new ProcessSymbolData
                     {
                         X = Math.Max(0, x - ProcessSymbolData.DefaultWidth / 2),
                         Y = y - ProcessSymbolData.DefaultHeight / 2
                     });
                 break;
             case "symbol-io":
-                symbols.Add(new IOSymbolData
+                AppState.Symbols.Add(new IOSymbolData
                     {
                         X = Math.Max(0, x - IOSymbolData.DefaultWidth / 2),
                         Y = y - IOSymbolData.DefaultHeight / 2
                     });
                 break;
             case "symbol-decision":
-                symbols.Add(new DecisionSymbolData
+                AppState.Symbols.Add(new DecisionSymbolData
                     {
                         X = Math.Max(0, x - DecisionSymbolData.DefaultHeight * DecisionSymbolData.DefaultScaleX / 2),
                         Y = y - DecisionSymbolData.DefaultHeight / 2
                     });
                 break;
         }
+        AppState.SelectedSymbolId = null;
+        EventBroadcast.UpdateMenu();
         StateHasChanged();
     }
 

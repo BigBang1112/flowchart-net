@@ -1,4 +1,5 @@
 @inject AppState AppState
+@inject EventBroadcastService EventBroadcast
 
 <menu>
     <h2 class="symbols">Symbols</h2>
@@ -20,4 +21,10 @@
     private void SelectItem(string name) => AppState.SelectedSymbolId = name;
 
     private bool IsSelected(string identifier) => AppState.SelectedSymbolId == identifier;
+
+    protected override Task OnInitializedAsync()
+    {
+        EventBroadcast.MenuUpdate += () => StateHasChanged();
+        return base.OnInitializedAsync();
+    }
 }
