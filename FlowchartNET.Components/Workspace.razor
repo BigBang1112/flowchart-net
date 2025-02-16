@@ -1,7 +1,9 @@
-﻿@implements IAsyncDisposable
+﻿@using System.Runtime.InteropServices.JavaScript
+@implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject AppState AppState
 
-<main @ondragover="OnDragOver" @ondragover:preventDefault="true">
+<main @ondragover="OnDragOver" @onclick="OnClickAsync" @ondragover:preventDefault="true">
     @foreach (var symbol in symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
@@ -31,6 +33,16 @@
     private void OnDragOver(DragEventArgs e)
     {
         // prevent default behavior
+    }
+
+    private async Task OnClickAsync(MouseEventArgs e)
+    {
+        if (AppState.SelectedSymbolId is not null && module is not null)
+        {
+            var mouseX = await module.InvokeAsync<double>("getMouseX", e);
+            var mouseY = await module.InvokeAsync<double>("getMouseY", e);
+            AddSymbol(AppState.SelectedSymbolId, mouseX, mouseY);
+        }
     }
 
     [JSInvokable]

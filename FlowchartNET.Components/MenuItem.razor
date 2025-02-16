@@ -1,10 +1,9 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 
-
 <li @ref="button" class="button-noborder @(IsSelected ? "active" : "")" 
     draggable="true"
-    @onmousedown="() => OnMouseDown.InvokeAsync(Name)">
+    @onmousedown="() => OnMouseDown.InvokeAsync(SymbolClass)">
     <div class="symbol @SymbolClass">
         @ChildContent
         @if (!string.IsNullOrWhiteSpace(Name) && IsNameVisible)

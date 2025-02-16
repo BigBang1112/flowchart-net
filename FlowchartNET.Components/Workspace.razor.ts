@@ -1,5 +1,6 @@
+const main = document.getElementsByTagName('main')[0];
+
 export function addHandlers(dotNetHelper: any): void {
-    const main = document.getElementsByTagName('main')[0];
     main.addEventListener('drop', (event: DragEvent) => {
         event.preventDefault();
 
@@ -17,4 +18,14 @@ export function addHandlers(dotNetHelper: any): void {
 
         dotNetHelper.invokeMethodAsync('AddSymbol', symbolId, x, y);
     });
+}
+
+export function getMouseX(event: MouseEvent): number {
+    const rect = main.getBoundingClientRect();
+    return event.clientX - rect.left;
+}
+
+export function getMouseY(event: MouseEvent): number {
+    const rect = main.getBoundingClientRect();
+    return event.clientY - rect.top;
 }

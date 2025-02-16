@@ -1,23 +1,23 @@
+@inject AppState AppState
+
 <menu>
     <h2 class="symbols">Symbols</h2>
-    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItem" IsSelected="@IsSelected("Start / End")" />
-    <MenuItem SymbolClass="symbol-flowline" Name="Flowline" IsNameVisible="false" OnMouseDown="SelectItem" IsSelected="@IsSelected("Flowline")">
+    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-terminal")" />
+    <MenuItem SymbolClass="symbol-flowline" Name="Flowline" IsNameVisible="false" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-flowline")">
         <div class="line"></div>
         <div class="point"></div>
     </MenuItem>
-    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItem" IsSelected="@IsSelected("Process")" />
-    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItem" IsSelected="@IsSelected("Input / Output")">
+    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-process")" />
+    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-io")">
         <div class="shape"></div>
     </MenuItem>
-    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItem" IsSelected="@IsSelected("Decision")">
+    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-decision")">
         <div class="shape"></div>
     </MenuItem>
 </menu>
 
 @code {
-    private string? SelectedItem { get; set; }
+    private void SelectItem(string name) => AppState.SelectedSymbolId = name;
 
-    private void SelectItem(string name) => SelectedItem = name;
-
-    private bool IsSelected(string identifier) => SelectedItem == identifier;
+    private bool IsSelected(string identifier) => AppState.SelectedSymbolId == identifier;
 }
