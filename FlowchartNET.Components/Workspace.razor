@@ -41,8 +41,8 @@
     {
         if (AppState.SelectedSymbolId is not null && module is not null)
         {
-            var mouseX = await module.InvokeAsync<double>("getMouseX", e);
-            var mouseY = await module.InvokeAsync<double>("getMouseY", e);
+            var mouseX = await module.InvokeAsync<int>("getMouseX", e);
+            var mouseY = await module.InvokeAsync<int>("getMouseY", e);
             AddSymbol(AppState.SelectedSymbolId, mouseX, mouseY);
         }
     }
