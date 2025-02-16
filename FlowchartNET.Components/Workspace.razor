@@ -16,9 +16,6 @@
 
     private DotNetObjectReference<Workspace>? objRef;
 
-    [Parameter]
-    public EventCallback OnSymbolAdd { get; set; }
-
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
 
