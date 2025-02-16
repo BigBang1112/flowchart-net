@@ -1,3 +1,5 @@
+declare const LeaderLine: any;
+
 const main = document.getElementsByTagName('main')[0];
 
 export function addHandlers(dotNetHelper: any): void {
@@ -28,4 +30,9 @@ export function getMouseX(clientX: number): number {
 export function getMouseY(clientY: number): number {
     const rect = main.getBoundingClientRect();
     return clientY - rect.top;
+}
+
+export function connect(start: HTMLElement, end: HTMLElement): void {
+    new LeaderLine(start, end);
+    // line.position();
 }

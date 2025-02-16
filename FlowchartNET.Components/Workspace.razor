@@ -18,6 +18,8 @@
 
     private IDraggable? currentlyDraggedSymbol;
 
+    private ElementReference? connectorElement;
+
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
 
@@ -93,10 +95,11 @@
         new Dictionary<string, object>
         {
             { "Data", data },
-            { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnMouseDown) }
+            { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDown) },
+            { "OnPointClick", EventCallback.Factory.Create<ElementReference>(this, OnSymbolPointClickAsync) }
         };
 
-    private void OnMouseDown(SymbolDragEventArgs e)
+    private void OnSymbolMouseDown(SymbolDragEventArgs e)
     {
         currentlyDraggedSymbol = e.Draggable;
     }
@@ -105,15 +108,37 @@
     {
         if (currentlyDraggedSymbol is not null)
         {
-            currentlyDraggedSymbol.X = WorkspaceModule.GetMouseX(e.ClientX) - 120;
-            currentlyDraggedSymbol.Y = WorkspaceModule.GetMouseY(e.ClientY) - 40;
+            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(e.ClientX) - 120);
+            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(e.ClientY) - 40);
             StateHasChanged();
         }
     }
 
     private void OnMouseUp()
     {
-        currentlyDraggedSymbol = null;
+        if (currentlyDraggedSymbol is not null)
+        {
+            currentlyDraggedSymbol.IsDragging = false;
+            currentlyDraggedSymbol = null;
+        }
+    }
+
+    private async Task OnSymbolPointClickAsync(ElementReference element)
+    {
+        if (connectorElement is null)
+        {
+            connectorElement = element;
+            return;
+        }
+
+        if (module is null)
+        {
+            return;
+        }
+
+        await module.InvokeVoidAsync("connect", connectorElement, element);
+
+        connectorElement = null;
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
