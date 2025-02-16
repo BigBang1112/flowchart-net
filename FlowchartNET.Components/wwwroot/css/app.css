@@ -70,6 +70,10 @@ menu {
         width: 13rem;
     }
 
+    menu li div.symbol {
+        width: 100%;
+    }
+
 main {
     position: relative;
     overflow: auto;

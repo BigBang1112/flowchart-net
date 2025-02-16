@@ -1,7 +1,14 @@
+.symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .symbol-terminal {
     width: 100%;
     border: 3px solid var(--white);
-    line-height: 70px;
+    box-sizing: border-box;
+    height: 80px;
     text-align: center;
     border-radius: 2rem;
 }
@@ -9,8 +16,9 @@
 .symbol-process {
     width: 100%;
     border: 3px solid var(--white);
+    box-sizing: border-box;
     border-radius: 5px;
-    line-height: 70px;
+    height: 80px;
     text-align: center;
 }
 
@@ -36,34 +44,39 @@
 }
 
 .symbol-io {
-    width: 87%;
-    border: 3px solid var(--white);
-    border-radius: 5px;
-    transform: skewX(-20deg);
+    position: relative;
 }
 
+    .symbol-io .shape {
+        margin: 0 auto;
+        width: calc(100% - (80px * tan(20deg)));
+        border: 3px solid var(--white);
+        box-sizing: border-box;
+        border-radius: 5px;
+        transform: skewX(-20deg);
+        height: 80px;
+    }
+
     .symbol-io span {
-        display: block;
-        transform: skewX(20deg);
-        color: var(--white);
+        position: absolute;
         text-align: center;
-        line-height: 70px;
     }
 
 .symbol-decision {
-    width: 140px;
-    height: 140px;
-    border: 6px solid var(--white);
-    border-radius: 5px;
-    transform: scale(1, 0.4) rotate(45deg);
-    overflow: hidden;
+    position: relative;
+    height: 80px;
 }
 
+    .symbol-decision .shape {
+        width: calc(80px * sin(45deg) + 2px);
+        height: calc(80px * sin(45deg) + 2px);
+        transform: scaleX(2.5) rotate(45deg);
+        border: 2.75px solid var(--white);
+        box-sizing: border-box;
+        border-radius: 5px;
+    }
+
     .symbol-decision span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        transform: rotate(-45deg) scaleY(2.5);
-        color: var(--white);
+        position: absolute;
+        text-align: center;
     }
