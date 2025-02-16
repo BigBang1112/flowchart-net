@@ -1,6 +1,6 @@
 ﻿using FlowchartNET.Components.Symbols.Data;
 
-namespace FlowchartNET.Components;
+namespace FlowchartNET.Components.Services;
 
 public sealed class AppState
 {

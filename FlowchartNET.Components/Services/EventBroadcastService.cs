@@ -1,4 +1,4 @@
-﻿namespace FlowchartNET.Components;
+﻿namespace FlowchartNET.Components.Services;
 
 internal sealed class EventBroadcastService
 {

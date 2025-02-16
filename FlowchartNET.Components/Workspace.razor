@@ -1,6 +1,6 @@
-﻿@using System.Runtime.InteropServices.JavaScript
-@implements IAsyncDisposable
-@inject IJSRuntime JS
+﻿@implements IAsyncDisposable
+
+@inject ModuleHelper ModuleHelper
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
@@ -26,10 +26,7 @@
     {
         if (firstRender)
         {
-            module = await JS.InvokeAsync<IJSObjectReference>("import",
-                "./_content/FlowchartNET.Components/Workspace.razor.js");
-            await JSHost.ImportAsync(nameof(WorkspaceModule),
-                "../_content/FlowchartNET.Components/Workspace.razor.js");
+            module = await ModuleHelper.ImportAsync(nameof(Workspace), nameof(WorkspaceModule));
             await module.InvokeVoidAsync("addHandlers", objRef);
         }
     }

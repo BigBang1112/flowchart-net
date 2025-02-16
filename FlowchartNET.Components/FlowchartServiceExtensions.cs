@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FlowchartNET.Components.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FlowchartNET.Components;
 
@@ -8,6 +9,7 @@ public static class FlowchartServiceExtensions
     {
         services.AddSingleton<AppState>();
         services.AddSingleton<EventBroadcastService>();
+        services.AddTransient<ModuleHelper>();
         return services;
     }
 }

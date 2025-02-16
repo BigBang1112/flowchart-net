@@ -1,5 +1,5 @@
 @implements IAsyncDisposable
-@inject IJSRuntime JS
+@inject ModuleHelper ModuleHelper
 
 <li @ref="button" class="button-noborder @(IsSelected ? "active" : "")" 
     draggable="true"
@@ -40,8 +40,7 @@
     {
         if (firstRender)
         {
-            module = await JS.InvokeAsync<IJSObjectReference>("import",
-                "./_content/FlowchartNET.Components/MenuItem.razor.js");
+            module = await ModuleHelper.ImportAsync(nameof(MenuItem));
             await module.InvokeVoidAsync("addHandlers", button, SymbolClass);
         }
     }

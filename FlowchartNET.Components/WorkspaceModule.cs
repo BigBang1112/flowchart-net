@@ -3,7 +3,7 @@
 namespace FlowchartNET.Components;
 
 // https://github.com/dotnet/aspnetcore/issues/52947
-internal partial class WorkspaceModule
+internal static partial class WorkspaceModule
 {
     [JSImport("getMouseX", nameof(WorkspaceModule))]
     public static partial double GetMouseX(double clientX);
