@@ -1,5 +1,5 @@
-﻿<div class="symbol symbol-decision" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
-    <div class="shape"></div>
+﻿<div class="symbol symbol-decision" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px; height: @(Data.Height)px">
+    <div class="shape" style="width: calc(@(Data.Height)px * sin(45deg) + 2px); height: calc(@(Data.Height)px * sin(45deg) + 2px); transform: scaleX(@Data.ScaleX) rotate(45deg);"></div>
     <span>Decision</span>
 </div>
 

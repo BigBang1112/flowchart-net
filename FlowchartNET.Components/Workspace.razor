@@ -36,22 +36,40 @@
     [JSInvokable]
     public void AddSymbol(string symbolId, double x, double y)
     {
-        y -= 40;
-
         switch (symbolId)
         {
             case "symbol-terminal":
-                symbols.Add(new StartSymbolData { X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2), Y = y });
-                symbols.Add(new EndSymbolData { X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2), Y = y + 100 });
+                symbols.Add(new StartSymbolData
+                    {
+                        X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2),
+                        Y = y - EndSymbolData.DefaultHeight / 2
+                    });
+                symbols.Add(new EndSymbolData
+                    {
+                        X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2),
+                        Y = y - EndSymbolData.DefaultHeight / 2 + 100
+                    });
                 break;
             case "symbol-process":
-                symbols.Add(new ProcessSymbolData { X = Math.Max(0, x - ProcessSymbolData.DefaultWidth / 2), Y = y });
+                symbols.Add(new ProcessSymbolData
+                    {
+                        X = Math.Max(0, x - ProcessSymbolData.DefaultWidth / 2),
+                        Y = y - ProcessSymbolData.DefaultHeight / 2
+                    });
                 break;
             case "symbol-io":
-                symbols.Add(new IOSymbolData { X = Math.Max(0, x - IOSymbolData.DefaultWidth / 2), Y = y });
+                symbols.Add(new IOSymbolData
+                    {
+                        X = Math.Max(0, x - IOSymbolData.DefaultWidth / 2),
+                        Y = y - IOSymbolData.DefaultHeight / 2
+                    });
                 break;
             case "symbol-decision":
-                symbols.Add(new DecisionSymbolData { X = Math.Max(0, x - DecisionSymbolData.DefaultWidth / 2), Y = y });
+                symbols.Add(new DecisionSymbolData
+                    {
+                        X = Math.Max(0, x - DecisionSymbolData.DefaultHeight * DecisionSymbolData.DefaultScaleX / 2),
+                        Y = y - DecisionSymbolData.DefaultHeight / 2
+                    });
                 break;
         }
         StateHasChanged();

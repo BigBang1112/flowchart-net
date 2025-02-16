@@ -27,7 +27,6 @@
 }
 
 .line {
-    margin-top: 8px;
     width: 140px;
     background: var(--white);
     height: 4px;
@@ -49,12 +48,10 @@
 
     .symbol-io .shape {
         margin: 0 auto;
-        width: calc(100% - (80px * tan(20deg)));
         border: 3px solid var(--white);
         box-sizing: border-box;
         border-radius: 5px;
         transform: skewX(-20deg);
-        height: 80px;
     }
 
     .symbol-io span {
@@ -64,16 +61,12 @@
 
 .symbol-decision {
     position: relative;
-    height: 80px;
 }
 
     .symbol-decision .shape {
-        width: calc(80px * sin(45deg) + 2px);
-        height: calc(80px * sin(45deg) + 2px);
-        transform: scaleX(2.5) rotate(45deg);
-        border: 2.75px solid var(--white);
+        border: 2.8px solid var(--white);
         box-sizing: border-box;
-        border-radius: 5px;
+        border-radius: 3px;
     }
 
     .symbol-decision span {

@@ -2,9 +2,12 @@
 
 public sealed class DecisionSymbolData : SymbolData
 {
-    public static double DefaultWidth { get; } = 220;
+    public static double DefaultHeight { get; } = 80;
+    public static double DefaultScaleX { get; } = 2.5;
 
     public override Type ComponentType => typeof(DecisionSymbol);
 
-    public double Width { get; set; } = DefaultWidth;
+    public double Width => Height * DefaultScaleX;
+    public double Height { get; set; } = DefaultHeight;
+    public double ScaleX { get; set; } = DefaultScaleX;
 }
