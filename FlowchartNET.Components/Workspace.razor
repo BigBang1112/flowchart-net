@@ -17,6 +17,8 @@
     private DotNetObjectReference<Workspace>? objRef;
 
     private IDraggable? currentlyDraggedSymbol;
+    private double currentlyDraggedSymbolOffsetX;
+    private double currentlyDraggedSymbolOffsetY;
 
     private ElementReference? connectorElement;
 
@@ -101,6 +103,8 @@
 
     private void OnSymbolMouseDown(SymbolDragEventArgs e)
     {
+        currentlyDraggedSymbolOffsetX = e.Draggable.X - WorkspaceModule.GetMouseX(e.Mouse.ClientX);
+        currentlyDraggedSymbolOffsetY = e.Draggable.Y - WorkspaceModule.GetMouseY(e.Mouse.ClientY);
         currentlyDraggedSymbol = e.Draggable;
     }
 
@@ -108,9 +112,8 @@
     {
         if (currentlyDraggedSymbol is not null)
         {
-            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(e.ClientX) - 120);
-            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(e.ClientY) - 40);
-            StateHasChanged();
+            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(e.ClientX) + currentlyDraggedSymbolOffsetX);
+            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(e.ClientY) + currentlyDraggedSymbolOffsetY);
         }
     }
 
