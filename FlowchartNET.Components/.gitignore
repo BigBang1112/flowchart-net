@@ -1,0 +1,6 @@
+# Ignore all .js and .map.js files
+*.js
+*.js.map
+
+# Exclude them from ignoring if there's no corresponding .ts file
+!**/*.ts
