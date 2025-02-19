@@ -33,6 +33,7 @@ export function getMouseY(clientY: number): number {
 }
 
 export function connect(start: HTMLElement, end: HTMLElement): void {
-    new LeaderLine(start, end);
+    var line = new LeaderLine(start, end);
+    line.color = '#e8eaed';
     // line.position();
 }

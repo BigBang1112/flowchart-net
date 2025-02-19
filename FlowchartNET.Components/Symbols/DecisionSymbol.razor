@@ -5,10 +5,10 @@
     @onmousedown="MouseDownAsync"
     @onmousedown:preventDefault="true"></div>
     <span>Decision</span>
-    <div @ref="pointTop" class="connect connect-top connect-top-decision" @onclick="() => OnPointClick.InvokeAsync(pointTop)"></div>
-    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-decision" @onclick="() => OnPointClick.InvokeAsync(pointBottom)"></div>
-    <div @ref="pointLeft" class="connect connect-left-decision" @onclick="() => OnPointClick.InvokeAsync(pointLeft)"></div>
-    <div @ref="pointRight" class="connect connect-right-decision" @onclick="() => OnPointClick.InvokeAsync(pointRight)"></div>
+    <div @ref="pointTop" class="connect connect-top connect-top-decision" @onclick="() => OnPointClickAsync(pointTop)"></div>
+    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-decision" @onclick="() => OnPointClickAsync(pointBottom)"></div>
+    <div @ref="pointLeft" class="connect connect-left-decision" @onclick="() => OnPointClickAsync(pointLeft)"></div>
+    <div @ref="pointRight" class="connect connect-right-decision" @onclick="() => OnPointClickAsync(pointRight)"></div>
 </div>
 
 @code {
@@ -35,5 +35,10 @@
     {
         IsDragging = true;
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e));
+    }
+
+    private async Task OnPointClickAsync(ElementReference element)
+    {
+        await OnPointClick.InvokeAsync(element);
     }
 }

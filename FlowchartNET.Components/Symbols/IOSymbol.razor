@@ -6,8 +6,8 @@
         @onmousedown="MouseDownAsync"
         @onmousedown:preventDefault="true"></div>
     <span>Input / Output</span>
-    <div @ref="pointTop" class="connect connect-top connect-top-io" @onclick="() => OnPointClick.InvokeAsync(pointTop)"></div>
-    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-io" @onclick="() => OnPointClick.InvokeAsync(pointBottom)"></div>
+    <div @ref="pointTop" class="connect connect-top connect-top-io" @onclick="() => OnPointClickAsync(pointTop)"></div>
+    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-io" @onclick="() => OnPointClickAsync(pointBottom)"></div>
 </div>
 
 @code {
@@ -32,5 +32,10 @@
     {
         IsDragging = true;
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e));
+    }
+
+    private async Task OnPointClickAsync(ElementReference element)
+    {
+        await OnPointClick.InvokeAsync(element);
     }
 }

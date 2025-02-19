@@ -139,6 +139,12 @@
             return;
         }
 
+        if (connectorElement.Value.Id == element.Id)
+        {
+            connectorElement = null;
+            return;
+        }
+
         await module.InvokeVoidAsync("connect", connectorElement, element);
 
         connectorElement = null;
