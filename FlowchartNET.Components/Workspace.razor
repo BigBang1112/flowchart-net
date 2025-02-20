@@ -4,7 +4,7 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main @ondragover="OnDragOver" @onclick="OnClick" @ondragover:preventDefault="true" @onmousemove="OnMouseMove" @onmouseup="OnMouseUp">
+<main @ondragover="OnDragOver" @onclick="OnClick" @ondragover:preventDefault="true" @onmousemove="OnMouseMoveAsync" @onmouseup="OnMouseUpAsync">
     @foreach (var symbol in AppState.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
@@ -20,7 +20,7 @@
     private double currentlyDraggedSymbolOffsetX;
     private double currentlyDraggedSymbolOffsetY;
 
-    private ElementReference? connectorElement;
+    private (ElementReference, string)? connectorElement;
 
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
@@ -98,7 +98,7 @@
         {
             { "Data", data },
             { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDown) },
-            { "OnPointClick", EventCallback.Factory.Create<ElementReference>(this, OnSymbolPointClickAsync) }
+            { "OnPointClick", EventCallback.Factory.Create<(ElementReference, string)>(this, OnSymbolPointClickAsync) }
         };
 
     private void OnSymbolMouseDown(SymbolDragEventArgs e)
@@ -108,25 +108,35 @@
         currentlyDraggedSymbol = e.Draggable;
     }
 
-    private void OnMouseMove(MouseEventArgs e)
+    private async Task OnMouseMoveAsync(MouseEventArgs e)
     {
         if (currentlyDraggedSymbol is not null)
         {
             currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(e.ClientX) + currentlyDraggedSymbolOffsetX);
             currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(e.ClientY) + currentlyDraggedSymbolOffsetY);
+
+            if (module is not null)
+            {
+                await module.InvokeVoidAsync("updateLinePosition");
+            }
         }
     }
 
-    private void OnMouseUp()
+    private async Task OnMouseUpAsync()
     {
         if (currentlyDraggedSymbol is not null)
         {
             currentlyDraggedSymbol.IsDragging = false;
             currentlyDraggedSymbol = null;
+
+            if (module is not null)
+            {
+                await module.InvokeVoidAsync("updateLinePosition");
+            }
         }
     }
 
-    private async Task OnSymbolPointClickAsync(ElementReference element)
+    private async Task OnSymbolPointClickAsync((ElementReference, string) element)
     {
         if (connectorElement is null)
         {
@@ -139,13 +149,13 @@
             return;
         }
 
-        if (connectorElement.Value.Id == element.Id)
+        if (connectorElement.Value.Item1.Id == element.Item1.Id)
         {
             connectorElement = null;
             return;
         }
 
-        await module.InvokeVoidAsync("connect", connectorElement, element);
+        await module.InvokeVoidAsync("connect", connectorElement.Value.Item1, element.Item1, connectorElement.Value.Item2, element.Item2);
 
         connectorElement = null;
     }

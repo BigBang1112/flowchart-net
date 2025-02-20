@@ -1,5 +1,7 @@
 declare const LeaderLine: any;
 
+const lines = [];
+
 const main = document.getElementsByTagName('main')[0];
 
 export function addHandlers(dotNetHelper: any): void {
@@ -32,8 +34,15 @@ export function getMouseY(clientY: number): number {
     return clientY - rect.top;
 }
 
-export function connect(start: HTMLElement, end: HTMLElement): void {
+export function connect(start: HTMLElement, end: HTMLElement, startSocket: string, endSocket: string): void {
     var line = new LeaderLine(start, end);
     line.color = '#e8eaed';
-    // line.position();
+    line.setOptions({ startSocket: startSocket, endSocket: endSocket });
+    lines.push(line);
+}
+
+export function updateLinePosition(): void {
+    lines.forEach(line => {
+        line.position();
+    });
 }

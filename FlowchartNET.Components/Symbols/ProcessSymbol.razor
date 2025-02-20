@@ -4,13 +4,15 @@
      @onmousedown="MouseDownAsync"
      @onmousedown:preventDefault="true">
     <span>Process</span>
-    <div @ref="pointTop" class="connect connect-top" @onclick="() => OnPointClickAsync(pointTop)"></div>
-    <div @ref="pointBottom" class="connect connect-bottom" @onclick="() => OnPointClickAsync(pointBottom)"></div>
+    <div @ref="pointTop" class="connect connect-top" @onclick="() => OnPointClickAsync(pointTop, socketTop)"></div>
+    <div @ref="pointBottom" class="connect connect-bottom" @onclick="() => OnPointClickAsync(pointBottom, socketBottom)"></div>
 </div>
 
 @code {
     private ElementReference pointTop;
     private ElementReference pointBottom;
+    private static string socketTop = "top";
+    private static string socketBottom = "bottom";
 
     public bool IsDragging { get; set; }
 
@@ -24,7 +26,7 @@
     public EventCallback<SymbolDragEventArgs> OnMouseDown { get; set; }
 
     [Parameter]
-    public EventCallback<ElementReference> OnPointClick { get; set; }
+    public EventCallback<(ElementReference, string)> OnPointClick { get; set; }
 
     private async Task MouseDownAsync(MouseEventArgs e)
     {
@@ -32,8 +34,8 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e));
     }
 
-    private async Task OnPointClickAsync(ElementReference element)
+    private async Task OnPointClickAsync(ElementReference element, string socket)
     {
-        await OnPointClick.InvokeAsync(element);
+        await OnPointClick.InvokeAsync((element, socket));
     }
 }
