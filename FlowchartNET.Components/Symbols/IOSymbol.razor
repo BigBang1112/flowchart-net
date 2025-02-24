@@ -5,7 +5,8 @@
     style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px; cursor: @(IsDragging ? "grabbing" : "grab");"
     @onmousedown="MouseDownAsync"
     @onmousedown:preventDefault="true"
-    @ontouchstart="TouchStartAsync"></div>
+    @ontouchstart="TouchStartAsync"
+    @ontouchstart:preventDefault="true"></div>
     <span>Input / Output</span>
     <div @ref="pointTop" class="connect connect-top connect-top-io" @onclick="() => OnPointClickAsync(pointTop, socketTop)"></div>
     <div @ref="pointBottom" class="connect connect-bottom connect-bottom-io" @onclick="() => OnPointClickAsync(pointBottom, socketBottom)"></div>

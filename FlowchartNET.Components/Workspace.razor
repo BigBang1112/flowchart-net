@@ -10,6 +10,7 @@
 @onmousemove="OnMouseMoveAsync"
 @onmouseup="OnMouseUpAsync"
 @ontouchmove="OnTouchMoveAsync"
+@ontouchmove:preventDefault="true"
 @ontouchcancel="OnMouseUpAsync">
     @foreach (var symbol in AppState.Symbols)
     {

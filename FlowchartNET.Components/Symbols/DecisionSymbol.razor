@@ -4,7 +4,8 @@
     <div class="shape symbol-hoverable" style="width: calc(@(Data.Height)px * sin(45deg) + 2px); height: calc(@(Data.Height)px * sin(45deg) + 2px); transform: scaleX(@Data.ScaleX) rotate(45deg); cursor: @(IsDragging ? "grabbing" : "grab");"
     @onmousedown="MouseDownAsync"
     @onmousedown:preventDefault="true"
-    @ontouchstart="TouchStartAsync"></div>
+    @ontouchstart="TouchStartAsync"
+    @ontouchstart:preventDefault="true"></div>
     <span>Decision</span>
     <div @ref="pointTop" class="connect connect-top connect-top-decision" @onclick="() => OnPointClickAsync(pointTop, socketTop)"></div>
     <div @ref="pointBottom" class="connect connect-bottom connect-bottom-decision" @onclick="() => OnPointClickAsync(pointBottom, socketBottom)"></div>
