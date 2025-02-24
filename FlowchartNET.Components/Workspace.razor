@@ -4,7 +4,13 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main @ondragover="OnDragOver" @onclick="OnClick" @ondragover:preventDefault="true" @onmousemove="OnMouseMoveAsync" @onmouseup="OnMouseUpAsync">
+<main @ondragover="OnDragOver" 
+@onclick="OnClick" 
+@ondragover:preventDefault="true" 
+@onmousemove="OnMouseMoveAsync"
+@onmouseup="OnMouseUpAsync"
+@ontouchmove="OnTouchMoveAsync"
+@ontouchcancel="OnMouseUpAsync">
     @foreach (var symbol in AppState.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
@@ -103,17 +109,32 @@
 
     private void OnSymbolMouseDown(SymbolDragEventArgs e)
     {
-        currentlyDraggedSymbolOffsetX = e.Draggable.X - WorkspaceModule.GetMouseX(e.Mouse.ClientX);
-        currentlyDraggedSymbolOffsetY = e.Draggable.Y - WorkspaceModule.GetMouseY(e.Mouse.ClientY);
+        currentlyDraggedSymbolOffsetX = e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX);
+        currentlyDraggedSymbolOffsetY = e.Draggable.Y - WorkspaceModule.GetMouseY(e.ClientY);
         currentlyDraggedSymbol = e.Draggable;
     }
 
     private async Task OnMouseMoveAsync(MouseEventArgs e)
     {
+        await SymbolMoveAsync(e.ClientX, e.ClientY);
+    }
+
+    private async Task OnTouchMoveAsync(TouchEventArgs e)
+    {
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
+
+        await SymbolMoveAsync(e.Touches[0].ClientX, e.Touches[0].ClientY);
+    }
+
+    private async Task SymbolMoveAsync(double clientX, double clientY)
+    {
         if (currentlyDraggedSymbol is not null)
         {
-            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(e.ClientX) + currentlyDraggedSymbolOffsetX);
-            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(e.ClientY) + currentlyDraggedSymbolOffsetY);
+            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(clientX) + currentlyDraggedSymbolOffsetX);
+            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(clientY) + currentlyDraggedSymbolOffsetY);
 
             if (module is not null)
             {

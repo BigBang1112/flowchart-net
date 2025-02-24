@@ -2,7 +2,8 @@
 
 <div class="symbol symbol-terminal symbol-hoverable" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px; cursor: @(IsDragging ? "grabbing" : "grab");"
      @onmousedown="MouseDownAsync"
-     @onmousedown:preventDefault="true">
+     @onmousedown:preventDefault="true"
+     @ontouchstart="TouchStartAsync">
     <span>Start</span>
     <div @ref="point" class="connect connect-bottom" @onclick="() => OnPointClickAsync(point, socket)"></div>
 </div>
@@ -28,7 +29,18 @@
     private async Task MouseDownAsync(MouseEventArgs e)
     {
         IsDragging = true;
-        await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e));
+        await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.ClientX, e.ClientY));
+    }
+
+    private async Task TouchStartAsync(TouchEventArgs e)
+    {
+        if (e.Touches.Length == 0)
+        {
+            return;
+        }
+
+        IsDragging = true;
+        await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
     private async Task OnPointClickAsync(ElementReference element, string socket)

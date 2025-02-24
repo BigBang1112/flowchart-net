@@ -1,5 +1,3 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿namespace FlowchartNET.Components.Symbols;
 
-namespace FlowchartNET.Components.Symbols;
-
-public sealed record SymbolDragEventArgs(IDraggable Draggable, MouseEventArgs Mouse);
+public sealed record SymbolDragEventArgs(IDraggable Draggable, double ClientX, double ClientY);
