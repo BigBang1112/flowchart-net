@@ -7,12 +7,14 @@
          @ontouchstart="TouchStartAsync"
          @ontouchstart:preventDefault="true"></div>
     <span>Start</span>
-    <div @ref="point" class="connect connect-bottom" @onclick="() => OnPointClickAsync(shape, socket)" @onclick:stopPropagation="true"></div>
+    <div class="connect connect-bottom"
+         @onclick="() => OnPointClickAsync(socket, id => Data.NextSymbol = id)"
+         @onclick:stopPropagation="true"
+         @onmousedown:preventDefault="true"></div>
 </div>
 
 @code {
     private ElementReference shape;
-    private ElementReference point;
     private static string socket = "bottom";
 
     public bool IsDragging { get; set; }
@@ -47,8 +49,8 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
-    private async Task OnPointClickAsync(ElementReference element, string socket)
+    private async Task OnPointClickAsync(string socket, Action<Guid>? connector = null)
     {
-        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, element, socket));
+        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connector));
     }
 }

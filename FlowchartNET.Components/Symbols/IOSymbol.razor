@@ -9,14 +9,18 @@
         @ontouchstart="TouchStartAsync"
         @ontouchstart:preventDefault="true"></div>
     <span>Input / Output</span>
-    <div @ref="pointTop" class="connect connect-top connect-top-io" @onclick="() => OnPointClickAsync(shape, socketTop)" @onclick:stopPropagation="true"></div>
-    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-io" @onclick="() => OnPointClickAsync(shape, socketBottom)" @onclick:stopPropagation="true"></div>
+    <div class="connect connect-top connect-top-io"
+         @onclick="() => OnPointClickAsync(socketTop)"
+         @onclick:stopPropagation="true"
+         @onmousedown:preventDefault="true"></div>
+    <div class="connect connect-bottom connect-bottom-io"
+         @onclick="() => OnPointClickAsync(socketBottom, id => Data.NextSymbol = id)"
+         @onclick:stopPropagation="true"
+         @onmousedown:preventDefault="true"></div>
 </div>
 
 @code {
     private ElementReference shape;
-    private ElementReference pointTop;
-    private ElementReference pointBottom;
     private static string socketTop = "top";
     private static string socketBottom = "bottom";
 
@@ -52,8 +56,8 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
-    private async Task OnPointClickAsync(ElementReference element, string socket)
+    private async Task OnPointClickAsync(string socket, Action<Guid>? connector = null)
     {
-        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, element, socket));
+        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connector));
     }
 }
