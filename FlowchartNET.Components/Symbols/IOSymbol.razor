@@ -1,18 +1,20 @@
-﻿@implements IDraggable
+﻿@using FlowchartNET.Components.Events
+@implements IDraggable
 
 <div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
-    <div class="shape symbol-hoverable"
+    <div @ref="shape" class="shape symbol-hoverable"
     style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px; cursor: @(IsDragging ? "grabbing" : "grab");"
-    @onmousedown="MouseDownAsync"
-    @onmousedown:preventDefault="true"
-    @ontouchstart="TouchStartAsync"
-    @ontouchstart:preventDefault="true"></div>
+        @onmousedown="MouseDownAsync"
+        @onmousedown:preventDefault="true"
+        @ontouchstart="TouchStartAsync"
+        @ontouchstart:preventDefault="true"></div>
     <span>Input / Output</span>
-    <div @ref="pointTop" class="connect connect-top connect-top-io" @onclick="() => OnPointClickAsync(pointTop, socketTop)"></div>
-    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-io" @onclick="() => OnPointClickAsync(pointBottom, socketBottom)"></div>
+    <div @ref="pointTop" class="connect connect-top connect-top-io" @onclick="() => OnPointClickAsync(shape, socketTop)" @onclick:stopPropagation="true"></div>
+    <div @ref="pointBottom" class="connect connect-bottom connect-bottom-io" @onclick="() => OnPointClickAsync(shape, socketBottom)" @onclick:stopPropagation="true"></div>
 </div>
 
 @code {
+    private ElementReference shape;
     private ElementReference pointTop;
     private ElementReference pointBottom;
     private static string socketTop = "top";
@@ -23,6 +25,7 @@
     [Parameter, EditorRequired]
     public required IOSymbolData Data { get; set; }
 
+    Guid IDraggable.Id => Data.Id;
     double IDraggable.X { get => Data.X; set => Data.X = value; }
     double IDraggable.Y { get => Data.Y; set => Data.Y = value; }
 
@@ -30,7 +33,7 @@
     public EventCallback<SymbolDragEventArgs> OnMouseDown { get; set; }
 
     [Parameter]
-    public EventCallback<(ElementReference, string)> OnPointClick { get; set; }
+    public EventCallback<PointClickEventArgs> OnPointClick { get; set; }
 
     private async Task MouseDownAsync(MouseEventArgs e)
     {
@@ -51,6 +54,6 @@
 
     private async Task OnPointClickAsync(ElementReference element, string socket)
     {
-        await OnPointClick.InvokeAsync((element, socket));
+        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, element, socket));
     }
 }

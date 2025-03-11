@@ -14,21 +14,41 @@
 
 .symbol-terminal {
     width: 100%;
-    border: 3px solid var(--white);
-    box-sizing: border-box;
     height: 80px;
     text-align: center;
-    border-radius: 2rem;
 }
+
+    .symbol-terminal .shape {
+        width: 100%;
+        height: 100%;
+        border: 3px solid var(--white);
+        box-sizing: border-box;
+        border-radius: 2rem;
+    }
+
+    .symbol-terminal span {
+        position: absolute;
+        pointer-events: none;
+    }
 
 .symbol-process {
     width: 100%;
-    border: 3px solid var(--white);
-    box-sizing: border-box;
-    border-radius: 5px;
     height: 80px;
     text-align: center;
 }
+
+    .symbol-process .shape {
+        width: 100%;
+        height: 100%;
+        border: 3px solid var(--white);
+        box-sizing: border-box;
+        border-radius: 5px;
+    }
+
+    .symbol-process span {
+        position: absolute;
+        pointer-events: none;
+    }
 
 .symbol-flowline {
     width: 160px;
@@ -75,7 +95,7 @@
     .symbol-decision .shape {
         border: 2.8px solid var(--white);
         box-sizing: border-box;
-        border-radius: 3px;
+        border-radius: 1px;
     }
 
     .symbol-decision span {
@@ -86,37 +106,38 @@
 
 .connect {
     position: absolute;
-    width: 1rem;
-    height: 1rem;
     border-radius: 1rem;
     cursor: pointer;
     box-sizing: border-box;
+    background-color: var(--white);
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
+
+    .connect:hover {
+        opacity: 1;
+    }
 
 .connect-bottom {
-    bottom: -0.5rem;
-    border-bottom: 3px solid var(--white);
+    width: 2rem;
+    height: 2rem;
+    bottom: -1rem;
+    clip-path: rect(50% 100% 100% 0);
 }
-
-    .connect-bottom:hover {
-        border-bottom: 7px solid var(--white);
-    }
 
 .connect-top {
-    top: -0.5rem;
-    border-top: 3px solid var(--white);
+    width: 2rem;
+    height: 2rem;
+    top: -1rem;
+    clip-path: rect(0 100% 50% 0);
 }
 
-    .connect-top:hover {
-        border-top: 7px solid var(--white);
-    }
-
 .connect-bottom-io {
-    bottom: -0.35rem !important;
+    bottom: -0.9rem !important;
 }
 
 .connect-top-io {
-    top: -0.35rem !important;
+    top: -0.9rem !important;
 }
 
 .connect-bottom-decision {

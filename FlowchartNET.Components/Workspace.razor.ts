@@ -1,6 +1,6 @@
 declare const LeaderLine: any;
 
-const lines = [];
+let currentLine: any;
 
 const main = document.getElementsByTagName('main')[0];
 
@@ -22,6 +22,15 @@ export function addHandlers(dotNetHelper: any): void {
 
         dotNetHelper.invokeMethodAsync('AddSymbol', symbolId, x, y);
     });
+
+    main.addEventListener('mousemove', (e) => {
+        if (currentLine) {
+            currentLine.show();
+            currentLine.setOptions({
+                end: LeaderLine.pointAnchor(document.body, { x: e.clientX, y: e.clientY })
+            });
+        }
+    });
 }
 
 export function getMouseX(clientX: number): number {
@@ -35,14 +44,59 @@ export function getMouseY(clientY: number): number {
 }
 
 export function connect(start: HTMLElement, end: HTMLElement, startSocket: string, endSocket: string): void {
-    var line = new LeaderLine(start, end);
+    /*var line = new LeaderLine(start, end);
     line.color = '#e8eaed';
     line.setOptions({ startSocket: startSocket, endSocket: endSocket, path: 'grid' });
-    lines.push(line);
+    lines.push(line);*/
+}
+
+export function startLine(start: HTMLElement, startSocket: string): void {
+    if (currentLine) {
+        currentLine.remove();
+    }
+
+    var line = new LeaderLine(start, LeaderLine.pointAnchor(document.body, { x: 0, y: 0 }), {
+        color: '#e8eaed',
+        startSocket: startSocket,
+        path: 'grid',
+        hide: true,
+        dash: { animation: true }
+    });
+
+    currentLine = line;
+}
+
+export function endLine(end: HTMLElement, endSocket: string): any {
+    if (!currentLine) {
+        return null;
+    }
+
+    const line = currentLine;
+    currentLine = null;
+
+    line.show();
+    line.setOptions({
+        end: end,
+        endSocket: endSocket,
+        dash: false
+    });
+
+    return line;
+}
+
+export function removeLine(line: any): void {
+    line.remove();
+}
+
+export function removeCurrentLine(): void {
+    if (currentLine) {
+        currentLine.remove();
+        currentLine = null;
+    }
 }
 
 export function updateLinePosition(): void {
-    lines.forEach(line => {
+    /*lines.forEach(line => {
         line.position();
-    });
+    });*/
 }

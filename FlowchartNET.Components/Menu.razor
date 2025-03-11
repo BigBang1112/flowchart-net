@@ -3,12 +3,12 @@
 
 <menu>
     <h2 class="symbols">Symbols</h2>
-    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-terminal")" />
-    <MenuItem SymbolClass="symbol-flowline" Name="Flowline" IsNameVisible="false" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-flowline")">
-        <div class="line"></div>
-        <div class="point"></div>
+    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-terminal")">
+        <div class="shape"></div>
     </MenuItem>
-    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-process")" />
+    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-process")">
+        <div class="shape"></div>
+    </MenuItem>
     <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-io")">
         <div class="shape"></div>
     </MenuItem>
