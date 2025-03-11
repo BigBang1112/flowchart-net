@@ -1,5 +1,12 @@
-﻿namespace FlowchartNET.Components.Symbols.Data;
+﻿using System.Text.Json.Serialization;
 
+namespace FlowchartNET.Components.Symbols.Data;
+
+[JsonDerivedType(typeof(DecisionSymbolData))]
+[JsonDerivedType(typeof(EndSymbolData))]
+[JsonDerivedType(typeof(IOSymbolData))]
+[JsonDerivedType(typeof(ProcessSymbolData))]
+[JsonDerivedType(typeof(StartSymbolData))]
 public abstract class SymbolData
 {
     public abstract Type ComponentType { get; }

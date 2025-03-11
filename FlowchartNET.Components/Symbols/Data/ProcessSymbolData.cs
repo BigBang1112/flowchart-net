@@ -14,6 +14,8 @@ public sealed class ProcessSymbolData : SymbolData
     /// </summary>
     public string? VariableName { get; set; }
 
+    public string? DisplayName { get; set; }
+
     /// <summary>
     /// Process string that Regex will resolve.
     /// </summary>

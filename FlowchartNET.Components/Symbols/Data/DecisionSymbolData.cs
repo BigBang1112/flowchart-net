@@ -16,6 +16,8 @@ public sealed class DecisionSymbolData : SymbolData
     /// </summary>
     public string? Condition { get; set; }
 
+    public string? DisplayName { get; set; }
+
     public Guid? TrueBranch { get; set; }
     public Guid? FalseBranch { get; set; }
 }

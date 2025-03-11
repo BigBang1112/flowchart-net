@@ -11,6 +11,8 @@ public sealed class IOSymbolData : SymbolData
 
     public string? VariableName { get; set; }
 
+    public string? DisplayName { get; set; }
+
     /// <summary>
     /// The string format to output the variable in. If null, the symbol is considered an input symbol.
     /// </summary>
