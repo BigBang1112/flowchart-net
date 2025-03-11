@@ -8,4 +8,6 @@ public sealed class StartSymbolData : SymbolData
     public override Type ComponentType => typeof(StartSymbol);
 
     public double Width { get; set; } = DefaultWidth;
+
+    public Guid? NextSymbol { get; set; }
 }

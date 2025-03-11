@@ -10,4 +10,12 @@ public sealed class DecisionSymbolData : SymbolData
     public double Width => Height * DefaultScaleX;
     public double Height { get; set; } = DefaultHeight;
     public double ScaleX { get; set; } = DefaultScaleX;
+
+    /// <summary>
+    /// Condition string that Regex will resolve.
+    /// </summary>
+    public string? Condition { get; set; }
+
+    public Guid? TrueBranch { get; set; }
+    public Guid? FalseBranch { get; set; }
 }

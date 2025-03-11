@@ -8,4 +8,16 @@ public sealed class ProcessSymbolData : SymbolData
     public override Type ComponentType => typeof(ProcessSymbol);
 
     public double Width { get; set; } = DefaultWidth;
+
+    /// <summary>
+    /// Variable name to store the result of the process.
+    /// </summary>
+    public string? VariableName { get; set; }
+
+    /// <summary>
+    /// Process string that Regex will resolve.
+    /// </summary>
+    public string? Process { get; set; }
+
+    public Guid? NextSymbol { get; set; }
 }
