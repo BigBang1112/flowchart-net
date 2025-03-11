@@ -37,7 +37,7 @@ export function getMouseY(clientY: number): number {
 export function connect(start: HTMLElement, end: HTMLElement, startSocket: string, endSocket: string): void {
     var line = new LeaderLine(start, end);
     line.color = '#e8eaed';
-    line.setOptions({ startSocket: startSocket, endSocket: endSocket });
+    line.setOptions({ startSocket: startSocket, endSocket: endSocket, path: 'grid' });
     lines.push(line);
 }
 
