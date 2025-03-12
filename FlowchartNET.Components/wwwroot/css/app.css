@@ -125,6 +125,12 @@ aside {
         height: 10rem;
     }
 
+    aside .contents {
+        width: 13rem;
+        padding: 1rem;
+        overflow: hidden;
+    }
+
 
 h1 {
     display: flex;
