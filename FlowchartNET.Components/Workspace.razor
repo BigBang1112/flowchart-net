@@ -28,8 +28,8 @@
         <span>Symbol</span>
     </div>
     <div class="contents">
-        <div class="symbol symbol-terminal">
-            <div class="shape"></div>
+        <div class="symbol @GetSelectedSymbolClass()">
+            <div class="shape preview"></div>
         </div>
     </div>
 </aside>
@@ -44,6 +44,18 @@
 
     private PointClickEventArgs? currentConnectorEvent;
     private Dictionary<(Guid FromSymbolId, Guid ToSymbolId), IJSObjectReference> lines = [];
+
+    private SymbolData? GetSelectedSymbol() =>
+        AppState.Symbols.FirstOrDefault(x => x.Id == AppState.SelectedSymbolId);
+
+    private string GetSelectedSymbolClass() => GetSelectedSymbol() switch
+    {
+        StartSymbolData or EndSymbolData => "symbol-terminal",
+        ProcessSymbolData => "symbol-process",
+        IOSymbolData => "symbol-io",
+        DecisionSymbolData => "symbol-decision",
+        _ => ""
+    };
 
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
@@ -87,36 +99,38 @@
     [JSInvokable]
     public async Task AddSymbolAsync(string symbolId, double x, double y)
     {
+        var addedSymbols = new List<SymbolData>();
+
         switch (symbolId)
         {
             case "symbol-terminal":
-                AppState.Symbols.Add(new StartSymbolData
+                addedSymbols.Add(new StartSymbolData
                     {
                         X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2),
                         Y = y - EndSymbolData.DefaultHeight / 2
                     });
-                AppState.Symbols.Add(new EndSymbolData
+                addedSymbols.Add(new EndSymbolData
                     {
                         X = Math.Max(0, x - EndSymbolData.DefaultWidth / 2),
                         Y = y - EndSymbolData.DefaultHeight / 2 + 100
                     });
                 break;
             case "symbol-process":
-                AppState.Symbols.Add(new ProcessSymbolData
+                addedSymbols.Add(new ProcessSymbolData
                     {
                         X = Math.Max(0, x - ProcessSymbolData.DefaultWidth / 2),
                         Y = y - ProcessSymbolData.DefaultHeight / 2
                     });
                 break;
             case "symbol-io":
-                AppState.Symbols.Add(new IOSymbolData
+                addedSymbols.Add(new IOSymbolData
                     {
                         X = Math.Max(0, x - IOSymbolData.DefaultWidth / 2),
                         Y = y - IOSymbolData.DefaultHeight / 2
                     });
                 break;
             case "symbol-decision":
-                AppState.Symbols.Add(new DecisionSymbolData
+                addedSymbols.Add(new DecisionSymbolData
                     {
                         X = Math.Max(0, x - DecisionSymbolData.DefaultHeight * DecisionSymbolData.DefaultScaleX / 2),
                         Y = y - DecisionSymbolData.DefaultHeight / 2
@@ -124,7 +138,11 @@
                 break;
         }
 
+        AppState.Symbols.AddRange(addedSymbols);
         AppState.MenuSelectedSymbolId = null;
+        AppState.SelectedSymbolId = addedSymbols.FirstOrDefault()?.Id;
+        AppState.IsOptionsOpen = true;
+
         EventBroadcast.UpdateMenu();
         StateHasChanged();
 

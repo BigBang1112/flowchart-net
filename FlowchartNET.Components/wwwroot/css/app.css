@@ -83,7 +83,7 @@ main {
 
 aside {
     position: relative;
-    padding: 10px;
+    padding: 1rem;
     background-color: #2A2A2A;
     height: 0;
     z-index: 3;

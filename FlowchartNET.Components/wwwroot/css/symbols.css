@@ -87,6 +87,11 @@
         transform: skewX(-20deg);
     }
 
+        .symbol-io .shape.preview {
+            width: calc(100% - (80px * tan(20deg)));
+            height: 80px;
+        }
+
     .symbol-io span {
         position: absolute;
         text-align: center;
@@ -102,6 +107,12 @@
         box-sizing: border-box;
         border-radius: 1px;
     }
+
+        .symbol-decision .shape.preview {
+            width: calc(80px * sin(45deg) + 2px);
+            height: calc(80px * sin(45deg) + 2px);
+            transform: scaleX(2.5) rotate(45deg);
+        }
 
     .symbol-decision span {
         position: absolute;
