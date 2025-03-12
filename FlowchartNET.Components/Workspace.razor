@@ -230,6 +230,7 @@
         if (currentConnectorEvent.Symbol.Id == e.Symbol.Id)
         {
             currentConnectorEvent = null;
+            await module.InvokeVoidAsync("removeCurrentLine");
             return;
         }
 
