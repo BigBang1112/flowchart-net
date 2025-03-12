@@ -12,21 +12,12 @@ public sealed class StartSymbolData : SymbolData
 
     public double Width { get; set; } = DefaultWidth;
 
-    public Guid? NextSymbol { get; set; }
+    public HashSet<Guid> NextSymbols { get; set; } = [];
 
-    public override IEnumerable<Guid> GetConnectedSymbolIds()
-    {
-        if (NextSymbol.HasValue)
-        {
-            yield return NextSymbol.Value;
-        }
-    }
+    public override IEnumerable<Guid> GetConnectedSymbolIds() => NextSymbols;
 
     public override void RemoveConnection(Guid symbolId)
     {
-        if (NextSymbol == symbolId)
-        {
-            NextSymbol = null;
-        }
+        NextSymbols.Remove(symbolId);
     }
 }

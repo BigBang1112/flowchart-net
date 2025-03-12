@@ -2,6 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .symbol-hoverable {
@@ -145,17 +146,17 @@
 }
 
 .connect-bottom-decision {
-    bottom: -0.3rem !important;
+    bottom: -0.7rem !important;
 }
 
 .connect-top-decision {
-    top: -0.3rem !important;
+    top: -0.7rem !important;
 }
 
 .connect-left-decision {
-    width: 0.75rem !important;
-    height: 0.75rem !important;
-    left: -0.5rem !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    left: -1rem !important;
     border-top: 2px solid var(--white);
     border-left: 3px solid var(--white);
     border-bottom: 2px solid var(--white);
@@ -166,9 +167,9 @@
     }
 
 .connect-right-decision {
-    width: 0.75rem !important;
-    height: 0.75rem !important;
-    right: -0.5rem !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    right: -1rem !important;
     border-top: 2px solid var(--white);
     border-right: 3px solid var(--white);
     border-bottom: 2px solid var(--white);

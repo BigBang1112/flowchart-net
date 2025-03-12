@@ -21,21 +21,12 @@ public sealed class IOSymbolData : SymbolData
     /// </summary>
     public string? OutputFormat { get; set; }
 
-    public Guid? NextSymbol { get; set; }
+    public HashSet<Guid> NextSymbols { get; set; } = [];
 
-    public override IEnumerable<Guid> GetConnectedSymbolIds()
-    {
-        if (NextSymbol.HasValue)
-        {
-            yield return NextSymbol.Value;
-        }
-    }
+    public override IEnumerable<Guid> GetConnectedSymbolIds() => NextSymbols;
 
     public override void RemoveConnection(Guid symbolId)
     {
-        if (NextSymbol == symbolId)
-        {
-            NextSymbol = null;
-        }
+        NextSymbols.Remove(symbolId);
     }
 }

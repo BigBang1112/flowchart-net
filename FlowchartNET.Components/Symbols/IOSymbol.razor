@@ -15,7 +15,7 @@
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-bottom connect-bottom-io"
-         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.NextSymbol = conn.DestSymbolId; })"
+         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.NextSymbols.Add(conn.DestSymbolId); })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>

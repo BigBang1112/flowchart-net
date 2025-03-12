@@ -21,32 +21,25 @@ public sealed class DecisionSymbolData : SymbolData
 
     public string? DisplayName { get; set; }
 
-    public Guid? TrueBranch { get; set; }
-    public Guid? FalseBranch { get; set; }
+    public HashSet<Guid> TrueBranches { get; set; } = [];
+    public HashSet<Guid> FalseBranches { get; set; } = [];
 
     public override IEnumerable<Guid> GetConnectedSymbolIds()
     {
-        if (TrueBranch.HasValue)
+        foreach (var trueBranch in TrueBranches)
         {
-            yield return TrueBranch.Value;
+            yield return trueBranch;
         }
 
-        if (FalseBranch.HasValue)
+        foreach (var falseBranch in FalseBranches)
         {
-            yield return FalseBranch.Value;
+            yield return falseBranch;
         }
     }
 
     public override void RemoveConnection(Guid symbolId)
     {
-        if (TrueBranch == symbolId)
-        {
-            TrueBranch = null;
-        }
-
-        if (FalseBranch == symbolId)
-        {
-            FalseBranch = null;
-        }
+        TrueBranches.Remove(symbolId);
+        FalseBranches.Remove(symbolId);
     }
 }

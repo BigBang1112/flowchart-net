@@ -10,7 +10,7 @@
          @ontouchstart:preventDefault="true"></div>
     <span>Start</span>
     <div class="connect connect-bottom"
-         @onclick="() => OnPointClickAsync(socket, conn => { Data.NextSymbol = conn.DestSymbolId; })"
+         @onclick="() => OnPointClickAsync(socket, conn => { Data.NextSymbols.Add(conn.DestSymbolId); })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>

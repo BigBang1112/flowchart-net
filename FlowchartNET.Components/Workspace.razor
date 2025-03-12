@@ -201,20 +201,22 @@
         {
             if (e.Connector is null)
             {
+                // Gets all symbols that are connected to the clicked symbol
                 var allConnected = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
 
                 if (allConnected.Count == 0)
                 {
+                    // Action when nothing connects to the point
                     return;
                 }
 
                 // removing is "survivable", but it would be better to first loop through the lines, select only one of them, and delete after confirming selection
-                foreach (var symbol in allConnected)
+                foreach (var connectedSymbol in allConnected)
                 {
-                    var line = lines[(symbol.Id, e.Symbol.Id)];
+                    var line = lines[(connectedSymbol.Id, e.Symbol.Id)];
                     await line.InvokeVoidAsync("remove");
-                    symbol.RemoveConnection(e.Symbol.Id);
-                    lines.Remove((symbol.Id, e.Symbol.Id));
+                    connectedSymbol.RemoveConnection(e.Symbol.Id);
+                    lines.Remove((connectedSymbol.Id, e.Symbol.Id));
                 }
                 
                 return;

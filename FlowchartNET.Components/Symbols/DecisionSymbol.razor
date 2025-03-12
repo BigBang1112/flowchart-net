@@ -14,15 +14,15 @@
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-bottom connect-bottom-decision" 
-         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.FalseBranch = conn.DestSymbolId; })"
+         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.FalseBranches.Add(conn.DestSymbolId); })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-left-decision"
-         @onclick="() => OnPointClickAsync(socketLeft, conn => { Data.TrueBranch = conn.DestSymbolId; })"
+         @onclick="() => OnPointClickAsync(socketLeft, conn => { Data.TrueBranches.Add(conn.DestSymbolId); })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-right-decision"
-         @onclick="() => OnPointClickAsync(socketRight, conn => { Data.TrueBranch = conn.DestSymbolId; })"
+         @onclick="() => OnPointClickAsync(socketRight, conn => { Data.TrueBranches.Add(conn.DestSymbolId); })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>
