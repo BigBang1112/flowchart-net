@@ -218,7 +218,7 @@
                     connectedSymbol.RemoveConnection(e.Symbol.Id);
                     lines.Remove((connectedSymbol.Id, e.Symbol.Id));
                 }
-                
+
                 return;
             }
 
@@ -233,6 +233,14 @@
             return;
         }
 
+        // if the point is of the kind where arrows are coming from, cannot connect to that one
+        if (e.Connector is not null)
+        {
+            return;
+        }
+
+        // if the same symbol connection already exists, do not create a new one
+        // makes sense even for Decision, cannot reasonably connect from two branches to the same symbol
         if (lines.ContainsKey((currentConnectorEvent.Symbol.Id, e.Symbol.Id)))
         {
             return;
