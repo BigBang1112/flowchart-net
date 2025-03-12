@@ -56,7 +56,7 @@ menu {
     list-style-type: none;
     margin: 0;
     padding: 10px;
-    background-color: #222;
+    background-color: #2A2A2A;
     overflow: auto;
     align-content: flex-start;
 }
@@ -80,6 +80,51 @@ main {
     flex: 1;
     background-color: #444;
 }
+
+aside {
+    position: relative;
+    padding: 10px;
+    background-color: #2A2A2A;
+    height: 0;
+    z-index: 3;
+    transition: width 0.5s ease, height 0.5s ease;
+}
+
+    aside .opener {
+        position: absolute;
+        background-color: #333;
+        top: 2rem;
+        right: 100%;
+        padding: 0.5rem 1rem 0.7rem 1rem;
+        text-align: center;
+        border-radius: 1rem 0 0 1rem;
+        transition: background-color 0.1s ease;
+        border-bottom: 2px solid #666;
+        font-size: 75%;
+        cursor: pointer;
+        animation: fadeInOpacity 0.2s ease;
+    }
+
+        aside .opener:hover {
+            background-color: #555;
+        }
+
+        aside .opener span {
+            padding-bottom: 1rem;
+        }
+
+        aside .opener img {
+            transition: transform 0.2s ease;
+        }
+
+        aside .opener img.open {
+            transform: rotate(180deg);
+        }
+
+    aside.open {
+        height: 10rem;
+    }
+
 
 h1 {
     display: flex;
@@ -138,6 +183,16 @@ h2.symbols {
     h2.symbols {
         display: block;
     }
+
+    aside {
+        width: 0;
+        height: 100%;
+    }
+
+        aside.open {
+            width: 15rem;
+            height: 100%;
+        }
 }
 
 .screen-wide, .screen-medium {
@@ -162,3 +217,13 @@ h2.symbols {
     }
 }
 
+
+@keyframes fadeInOpacity {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

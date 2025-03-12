@@ -22,7 +22,12 @@
     }
 
 </main>
-
+<aside class="@(AppState.IsOptionsOpen ? "open" : "")">
+    <div class="opener" @onclick="() => AppState.IsOptionsOpen = !AppState.IsOptionsOpen">
+        <img class="@(AppState.IsOptionsOpen ? "open" : "")" src="_content/FlowchartNET.Components/img/icons/chevron_left.svg" width="48" height="48" />
+        <span>Symbol</span>
+    </div>
+</aside>
 @code {
     private IJSObjectReference? module;
 
@@ -169,6 +174,7 @@
     private async Task OnMouseDownAsync()
     {
         AppState.SelectedSymbolId = null;
+        AppState.IsOptionsOpen = false;
         await AppState.PersistAsync();
     }
 
@@ -178,6 +184,7 @@
         {
             currentlyDraggedSymbol.IsDragging = false;
             currentlyDraggedSymbol = null;
+            AppState.IsOptionsOpen = true;
 
             await UpdateLinePositionsAsync();
 

@@ -10,6 +10,8 @@ public sealed class AppState
 
     public string? MenuSelectedSymbolId { get; set; }
     public Guid? SelectedSymbolId { get; set; }
+    public bool IsOptionsOpen { get; set; }
+
     public List<SymbolData> Symbols { get; set; } = [];
 
     public AppState(IServiceProvider serviceProvider)
