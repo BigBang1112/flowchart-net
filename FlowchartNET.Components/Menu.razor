@@ -3,24 +3,29 @@
 
 <menu>
     <h2 class="symbols">Symbols</h2>
-    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-terminal")">
+    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-terminal")">
         <div class="shape"></div>
     </MenuItem>
-    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-process")">
+    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-process")">
         <div class="shape"></div>
     </MenuItem>
-    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-io")">
+    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-io")">
         <div class="shape"></div>
     </MenuItem>
-    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItem" IsSelected="@IsSelected("symbol-decision")">
+    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-decision")">
         <div class="shape"></div>
     </MenuItem>
 </menu>
 
 @code {
-    private void SelectItem(string name) => AppState.SelectedSymbolId = name;
+    private async Task SelectItemAsync(string name)
+    {
+        AppState.MenuSelectedSymbolId = name;
 
-    private bool IsSelected(string identifier) => AppState.SelectedSymbolId == identifier;
+        await AppState.PersistAsync();
+    }
+
+    private bool IsSelected(string identifier) => AppState.MenuSelectedSymbolId == identifier;
 
     protected override Task OnInitializedAsync()
     {

@@ -2,9 +2,10 @@
 @implements IDraggable
 
 <div class="symbol symbol-decision" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px; height: @(Data.Height)px">
-    <div @ref="shape" class="shape symbol-hoverable" style="width: calc(@(Data.Height)px * sin(45deg) + 2px); height: calc(@(Data.Height)px * sin(45deg) + 2px); transform: scaleX(@Data.ScaleX) rotate(45deg); cursor: @(IsDragging ? "grabbing" : "grab");"
+    <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "")" style="width: calc(@(Data.Height)px * sin(45deg) + 2px); height: calc(@(Data.Height)px * sin(45deg) + 2px); transform: scaleX(@Data.ScaleX) rotate(45deg); cursor: @(IsDragging ? "grabbing" : "grab");"
     @onmousedown="MouseDownAsync"
     @onmousedown:preventDefault="true"
+    @onmousedown:stopPropagation="true"
     @ontouchstart="TouchStartAsync"
     @ontouchstart:preventDefault="true"></div>
     <span>Decision</span>
@@ -13,15 +14,15 @@
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-bottom connect-bottom-decision" 
-         @onclick="() => OnPointClickAsync(socketBottom, id => Data.FalseBranch = id)"
+         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.FalseBranch = conn.DestSymbolId; })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-left-decision"
-         @onclick="() => OnPointClickAsync(socketLeft, id => Data.TrueBranch = id)"
+         @onclick="() => OnPointClickAsync(socketLeft, conn => { Data.TrueBranch = conn.DestSymbolId; })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-right-decision"
-         @onclick="() => OnPointClickAsync(socketRight, id => Data.TrueBranch = id)"
+         @onclick="() => OnPointClickAsync(socketRight, conn => { Data.TrueBranch = conn.DestSymbolId; })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>
@@ -49,6 +50,9 @@
     [Parameter]
     public EventCallback<PointClickEventArgs> OnPointClick { get; set; }
 
+    [Parameter]
+    public bool Selected { get; set; }
+
     private async Task MouseDownAsync(MouseEventArgs e)
     {
         IsDragging = true;
@@ -66,7 +70,7 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
-    private async Task OnPointClickAsync(string socket, Action<Guid>? connector = null)
+    private async Task OnPointClickAsync(string socket, Action<LineConnection>? connector = null)
     {
         await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connector));
     }

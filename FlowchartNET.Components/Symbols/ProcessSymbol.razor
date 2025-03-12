@@ -1,25 +1,28 @@
 ﻿@using FlowchartNET.Components.Events
 @implements IDraggable
 
-<div class="symbol symbol-process" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px; cursor: @(IsDragging ? "grabbing" : "grab");">
-    <div @ref="shape" class="shape symbol-hoverable"
-        @onmousedown="MouseDownAsync"
-        @onmousedown:preventDefault="true"
-        @ontouchstart="TouchStartAsync"
-        @ontouchstart:preventDefault="true"></div>
+<div class="symbol symbol-process" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
+    <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "")" style="cursor: @(IsDragging ? "grabbing" : "grab");"
+         @onmousedown="MouseDownAsync"
+         @onmousedown:preventDefault="true"
+         @onmousedown:stopPropagation="true"
+         @ontouchstart="TouchStartAsync"
+         @ontouchstart:preventDefault="true"></div>
     <span>Process</span>
     <div class="connect connect-top"
          @onclick="() => OnPointClickAsync(socketTop)"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-bottom"
-         @onclick="() => OnPointClickAsync(socketBottom, id => Data.NextSymbol = id)"
+         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.NextSymbol = conn.DestSymbolId; })"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>
 
 @code {
     private ElementReference shape;
+    private IJSObjectReference? nextSymbolLine;
+
     private static string socketTop = "top";
     private static string socketBottom = "bottom";
 
@@ -38,6 +41,9 @@
     [Parameter]
     public EventCallback<PointClickEventArgs> OnPointClick { get; set; }
 
+    [Parameter]
+    public bool Selected { get; set; }
+
     private async Task MouseDownAsync(MouseEventArgs e)
     {
         IsDragging = true;
@@ -55,7 +61,7 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
-    private async Task OnPointClickAsync(string socket, Action<Guid>? connector = null)
+    private async Task OnPointClickAsync(string socket, Action<LineConnection>? connector = null)
     {
         await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connector));
     }

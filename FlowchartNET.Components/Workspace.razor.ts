@@ -20,7 +20,7 @@ export function addHandlers(dotNetHelper: any): void {
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        dotNetHelper.invokeMethodAsync('AddSymbol', symbolId, x, y);
+        dotNetHelper.invokeMethodAsync('AddSymbolAsync', symbolId, x, y);
     });
 
     main.addEventListener('mousemove', (e) => {
@@ -93,10 +93,4 @@ export function removeCurrentLine(): void {
         currentLine.remove();
         currentLine = null;
     }
-}
-
-export function updateLinePosition(): void {
-    /*lines.forEach(line => {
-        line.position();
-    });*/
 }

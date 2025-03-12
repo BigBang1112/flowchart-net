@@ -9,15 +9,18 @@
 @onclick="OnClickAsync"
 @ondragover:preventDefault="true" 
 @onmousemove="OnMouseMoveAsync"
+@onmousedown="OnMouseDownAsync"
 @onmouseup="OnMouseUpAsync"
 @ontouchmove="OnTouchMoveAsync"
 @ontouchmove:preventDefault="true"
 @ontouchcancel="OnMouseUpAsync"
 @onscroll="OnScrollAsync">
+
     @foreach (var symbol in AppState.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
     }
+
 </main>
 
 @code {
@@ -30,7 +33,7 @@
     private double currentlyDraggedSymbolOffsetY;
 
     private PointClickEventArgs? currentConnectorEvent;
-    private List<IJSObjectReference> lines = [];
+    private Dictionary<(Guid FromSymbolId, Guid ToSymbolId), IJSObjectReference> lines = [];
 
     protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
@@ -56,11 +59,12 @@
             return;
         }
 
-        if (AppState.SelectedSymbolId is not null)
+        if (AppState.MenuSelectedSymbolId is not null)
         {
             var mouseX = WorkspaceModule.GetMouseX(e.ClientX);
             var mouseY = WorkspaceModule.GetMouseY(e.ClientY);
-            AddSymbol(AppState.SelectedSymbolId, mouseX, mouseY);
+
+            await AddSymbolAsync(AppState.MenuSelectedSymbolId, mouseX, mouseY);
         }
 
         if (currentConnectorEvent is not null)
@@ -71,7 +75,7 @@
     }
 
     [JSInvokable]
-    public void AddSymbol(string symbolId, double x, double y)
+    public async Task AddSymbolAsync(string symbolId, double x, double y)
     {
         switch (symbolId)
         {
@@ -109,24 +113,31 @@
                     });
                 break;
         }
-        AppState.SelectedSymbolId = null;
+
+        AppState.MenuSelectedSymbolId = null;
         EventBroadcast.UpdateMenu();
         StateHasChanged();
+
+        await AppState.PersistAsync();
     }
 
     private Dictionary<string, object> GetSymbolComponentParameters(SymbolData data) =>
         new Dictionary<string, object>
         {
             { "Data", data },
-            { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDown) },
-            { "OnPointClick", EventCallback.Factory.Create<PointClickEventArgs>(this, OnSymbolPointClickAsync) }
+            { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDownAsync) },
+            { "OnPointClick", EventCallback.Factory.Create<PointClickEventArgs>(this, OnSymbolPointClickAsync) },
+            { "Selected", AppState.SelectedSymbolId == data.Id }
         };
 
-    private void OnSymbolMouseDown(SymbolDragEventArgs e)
+    private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
     {
         currentlyDraggedSymbolOffsetX = e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX);
         currentlyDraggedSymbolOffsetY = e.Draggable.Y - WorkspaceModule.GetMouseY(e.ClientY);
         currentlyDraggedSymbol = e.Draggable;
+        AppState.SelectedSymbolId = e.Draggable.Id;
+
+        await AppState.PersistAsync();
     }
 
     private async Task OnMouseMoveAsync(MouseEventArgs e)
@@ -155,6 +166,12 @@
         }
     }
 
+    private async Task OnMouseDownAsync()
+    {
+        AppState.SelectedSymbolId = null;
+        await AppState.PersistAsync();
+    }
+
     private async Task OnMouseUpAsync()
     {
         if (currentlyDraggedSymbol is not null)
@@ -163,6 +180,8 @@
             currentlyDraggedSymbol = null;
 
             await UpdateLinePositionsAsync();
+
+            await AppState.PersistAsync();
         }
     }
 
@@ -180,8 +199,24 @@
 
         if (currentConnectorEvent is null)
         {
-            if (e.Socket == "top")
+            if (e.Connector is null)
             {
+                var allConnected = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
+
+                if (allConnected.Count == 0)
+                {
+                    return;
+                }
+
+                // removing is "survivable", but it would be better to first loop through the lines, select only one of them, and delete after confirming selection
+                foreach (var symbol in allConnected)
+                {
+                    var line = lines[(symbol.Id, e.Symbol.Id)];
+                    await line.InvokeVoidAsync("remove");
+                    symbol.RemoveConnection(e.Symbol.Id);
+                    lines.Remove((symbol.Id, e.Symbol.Id));
+                }
+                
                 return;
             }
 
@@ -196,13 +231,20 @@
             return;
         }
 
+        if (lines.ContainsKey((currentConnectorEvent.Symbol.Id, e.Symbol.Id)))
+        {
+            return;
+        }
+
         var completedLine = await module.InvokeAsync<IJSObjectReference>("endLine", e.Element, e.Socket);
 
-        currentConnectorEvent.Connector?.Invoke(e.Symbol.Id);
+        currentConnectorEvent.Connector?.Invoke(new LineConnection(e.Symbol.Id));
 
-        lines.Add(completedLine);
+        lines.Add((currentConnectorEvent.Symbol.Id, e.Symbol.Id), completedLine);
 
         currentConnectorEvent = null;
+
+        await AppState.PersistAsync();
     }
 
     private async ValueTask UpdateLinePositionsAsync()
@@ -212,7 +254,7 @@
             return;
         }
 
-        foreach (var line in lines)
+        foreach (var line in lines.Values)
         {
             await line.InvokeVoidAsync("position");
         }

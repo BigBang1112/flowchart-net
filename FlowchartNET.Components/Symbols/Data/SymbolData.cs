@@ -2,11 +2,11 @@
 
 namespace FlowchartNET.Components.Symbols.Data;
 
-[JsonDerivedType(typeof(DecisionSymbolData))]
-[JsonDerivedType(typeof(EndSymbolData))]
-[JsonDerivedType(typeof(IOSymbolData))]
-[JsonDerivedType(typeof(ProcessSymbolData))]
-[JsonDerivedType(typeof(StartSymbolData))]
+[JsonDerivedType(typeof(DecisionSymbolData), "decision")]
+[JsonDerivedType(typeof(EndSymbolData), "end")]
+[JsonDerivedType(typeof(IOSymbolData), "io")]
+[JsonDerivedType(typeof(ProcessSymbolData), "process")]
+[JsonDerivedType(typeof(StartSymbolData), "start")]
 public abstract class SymbolData
 {
     public abstract Type ComponentType { get; }
@@ -16,4 +16,7 @@ public abstract class SymbolData
 
     public double X { get; set; }
     public double Y { get; set; }
+
+    public abstract IEnumerable<Guid> GetConnectedSymbolIds();
+    public abstract void RemoveConnection(Guid symbolId);
 }
