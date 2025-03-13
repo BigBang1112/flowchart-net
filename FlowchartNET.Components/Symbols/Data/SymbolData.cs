@@ -10,6 +10,7 @@ namespace FlowchartNET.Components.Symbols.Data;
 public abstract class SymbolData
 {
     public abstract Type ComponentType { get; }
+    public abstract Type EditionComponentType { get; }
 
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTimeOffset Created { get; set; } = DateTimeOffset.Now;
@@ -17,6 +18,9 @@ public abstract class SymbolData
     public double X { get; set; }
     public double Y { get; set; }
 
+    public string? DisplayName { get; set; }
+
+    public abstract string GetLabel();
     public abstract IEnumerable<Guid> GetConnectedSymbolIds();
     public abstract void RemoveConnection(Guid symbolId);
 }

@@ -8,7 +8,7 @@
     @onmousedown:stopPropagation="true"
     @ontouchstart="TouchStartAsync"
     @ontouchstart:preventDefault="true"></div>
-    <span>End</span>
+    <span>@Data.GetLabel()</span>
     <div class="connect connect-top"
     @onclick="() => OnPointClickAsync(socket)"
     @onclick:stopPropagation="true"

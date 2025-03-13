@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using FlowchartNET.Components.Symbols.Edition;
+using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Symbols.Data;
 
@@ -10,6 +11,9 @@ public sealed class ProcessSymbolData : SymbolData
     [JsonIgnore]
     public override Type ComponentType => typeof(ProcessSymbol);
 
+    [JsonIgnore]
+    public override Type EditionComponentType => typeof(ProcessSymbolEdition);
+
     public double Width { get; set; } = DefaultWidth;
 
     /// <summary>
@@ -17,14 +21,14 @@ public sealed class ProcessSymbolData : SymbolData
     /// </summary>
     public string? VariableName { get; set; }
 
-    public string? DisplayName { get; set; }
-
     /// <summary>
     /// Process string that Regex will resolve.
     /// </summary>
     public string? Process { get; set; }
 
     public HashSet<Guid> NextSymbols { get; set; } = [];
+
+    public override string GetLabel() => DisplayName ?? (VariableName is null ? Process : $"{VariableName} = {Process}") ?? "Process";
 
     public override IEnumerable<Guid> GetConnectedSymbolIds() => NextSymbols;
 

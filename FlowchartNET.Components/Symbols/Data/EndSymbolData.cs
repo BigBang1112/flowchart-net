@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using FlowchartNET.Components.Symbols.Edition;
+using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Symbols.Data;
 
@@ -10,7 +11,12 @@ public sealed class EndSymbolData : SymbolData
     [JsonIgnore]
     public override Type ComponentType => typeof(EndSymbol);
 
+    [JsonIgnore]
+    public override Type EditionComponentType => typeof(EndSymbolEdition);
+
     public double Width { get; set; } = DefaultWidth;
+
+    public override string GetLabel() => DisplayName ?? "End";
 
     public override IEnumerable<Guid> GetConnectedSymbolIds() => [];
 

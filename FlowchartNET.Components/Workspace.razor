@@ -28,9 +28,18 @@
         <span>Symbol</span>
     </div>
     <div class="contents">
-        <div class="symbol @GetSelectedSymbolClass()">
-            <div class="shape preview"></div>
-        </div>
+        @{
+            var selectedSymbol = GetSelectedSymbol();
+        }
+
+        @if (selectedSymbol is not null)
+        {
+            <div class="symbol @GetSelectedSymbolClass()">
+                <div class="shape preview"></div>
+                <span>@selectedSymbol.GetLabel()</span>
+            </div>
+            <DynamicComponent Type="selectedSymbol.EditionComponentType" Parameters="GetSymbolEditionComponentParameters(selectedSymbol)"></DynamicComponent>
+        }
     </div>
 </aside>
 @code {
@@ -156,7 +165,13 @@
             { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDownAsync) },
             { "OnPointClick", EventCallback.Factory.Create<PointClickEventArgs>(this, OnSymbolPointClickAsync) },
             { "Selected", AppState.SelectedSymbolId == data.Id }
-        };
+            };
+
+    private Dictionary<string, object> GetSymbolEditionComponentParameters(SymbolData data) =>
+        new Dictionary<string, object>
+            {
+            { "Data", data }
+            };
 
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
     {

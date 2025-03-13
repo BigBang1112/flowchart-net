@@ -8,7 +8,7 @@
          @onmousedown:stopPropagation="true"
          @ontouchstart="TouchStartAsync"
          @ontouchstart:preventDefault="true"></div>
-    <span>Start</span>
+    <span>@Data.GetLabel()</span>
     <div class="connect connect-bottom"
          @onclick="() => OnPointClickAsync(socket, conn => { Data.NextSymbols.Add(conn.DestSymbolId); })"
          @onclick:stopPropagation="true"
