@@ -1,7 +1,7 @@
 ﻿@using FlowchartNET.Components.Events
 @implements IDraggable
 
-<div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;">
+<div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;" @onkeydown="OnKeyDown">
     <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "")"
     style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px; cursor: @(IsDragging ? "grabbing" : "grab");"
          @onmousedown="MouseDownAsync"
@@ -41,6 +41,9 @@
 
     [Parameter]
     public EventCallback<PointClickEventArgs> OnPointClick { get; set; }
+
+    [Parameter]
+    public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
     [Parameter]
     public bool Selected { get; set; }

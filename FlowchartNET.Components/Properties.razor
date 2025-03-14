@@ -33,12 +33,18 @@
     private Dictionary<string, object> GetSymbolEditionComponentParameters(SymbolData data) =>
         new Dictionary<string, object>
         {
-            { "Data", data }
+            { "Data", data },
+            { "OnDelete", EventCallback.Factory.Create<SymbolData>(this, OnDeleteAsync) }
         };
 
     protected override Task OnInitializedAsync()
     {
         EventBroadcast.PropertiesUpdate += () => StateHasChanged();
         return base.OnInitializedAsync();
+    }
+
+    private async Task OnDeleteAsync(SymbolData data)
+    {
+        await EventBroadcast.DeleteSymbolAsync(data);
     }
 }

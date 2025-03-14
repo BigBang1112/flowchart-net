@@ -2,8 +2,16 @@
 @inject EventBroadcastService EventBroadcast
 
 <div class="property-group">
-    <label for="display_name">Display name:</label>
-    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" name="display_name" />
+    <label>Process:</label>
+    <input type="text" value="@Process" @oninput="e => Process = e.Value?.ToString()" @onchange="e => SetProcessAsync(e.Value?.ToString())" />
+</div>
+<div class="property-group">
+    <label>Store to variable (optional):</label>
+    <input type="text" value="@VariableName" @oninput="e => VariableName = e.Value?.ToString()" @onchange="e => SetVariableNameAsync(e.Value?.ToString())" />
+</div>
+<div class="property-group">
+    <label>Display name:</label>
+    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" />
 </div>
 <div class="property-group">
     @if (Data.NextSymbols.Count > 1)
@@ -27,10 +35,57 @@
         }
     }
 </div>
+<div class="property-group">
+    <span>Details:</span>
+    <table style="font-size:60%">
+        <tr>
+            <td>Position X:</td>
+            <td>@Data.X</td>
+        </tr>
+        <tr>
+            <td>Position Y:</td>
+            <td>@Data.Y</td>
+        </tr>
+        <tr>
+            <td>Width:</td>
+            <td>@Data.Width</td>
+        </tr>
+        <tr>
+            <td>Created at:</td>
+            <td>@Data.CreatedAt.DateTime</td>
+        </tr>
+    </table>
+</div>
+<button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>
 
 @code {
     [Parameter, EditorRequired]
     public required ProcessSymbolData Data { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<SymbolData> OnDelete { get; set; }
+
+    private string? Process
+    {
+        get => Data.Process;
+        set
+        {
+            Data.Process = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
+
+    private string? VariableName
+    {
+        get => Data.VariableName;
+        set
+        {
+            Data.VariableName = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
 
     private string? DisplayName
     {
@@ -41,6 +96,18 @@
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
+    }
+
+    private async Task SetProcessAsync(string? value)
+    {
+        Process = value;
+        await AppState.PersistAsync();
+    }
+
+    private async Task SetVariableNameAsync(string? value)
+    {
+        VariableName = value;
+        await AppState.PersistAsync();
     }
 
     private async Task SetDisplayNameAsync(string? value)

@@ -13,7 +13,7 @@ public abstract class SymbolData
     public abstract Type EditionComponentType { get; }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-    public DateTimeOffset Created { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
 
     public double X { get; set; }
     public double Y { get; set; }

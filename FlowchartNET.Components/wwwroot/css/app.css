@@ -127,6 +127,7 @@ aside {
     background-color: #2A2A2A;
     height: 0;
     z-index: 3;
+    overflow-y: auto;
     transition: width 0.5s ease, height 0.5s ease;
 }
 
@@ -175,21 +176,26 @@ aside {
         gap: 1.5rem;
     }
 
-input[type=text], input.text, select {
-    border: 1px solid #333;
-    font-family: inherit;
-    border-radius: 5px;
-    color: inherit;
-    padding: 2px 10px;
-    height: 32px;
-    background-color: #222;
-    font-size: inherit;
-    text-align: inherit;
+input[type=text], input.text, select {  
+   border: 1px solid #333;  
+   font-family: inherit;  
+   border-radius: 5px;  
+   color: inherit;  
+   padding: 2px 10px;  
+   height: 32px;  
+   background-color: #222;  
+   font-size: inherit;  
+   text-align: inherit;  
 }
 
-    input[type=text]:hover, input.text:hover, select:hover {
-        border-color: #444;
+   input[type=text]:enabled:hover, input.text:enabled:hover, select:enabled:hover {  
+       border-color: #444;  
+       background-color: #333;  
+   }
+
+    input[type=text]:disabled, input.text:enabled {
         background-color: #333;
+        cursor: not-allowed;
     }
 
 select {

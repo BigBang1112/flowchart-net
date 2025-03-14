@@ -2,8 +2,8 @@
 @inject EventBroadcastService EventBroadcast
 
 <div class="property-group">
-    <label for="display_name">Display name:</label>
-    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" name="display_name" placeholder="Start" />
+    <label>Display name:</label>
+    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" placeholder="Start" />
 </div>
 <div class="property-group">
     @if (Data.NextSymbols.Count > 1)
@@ -34,12 +34,33 @@
 
 <div class="property-group">
     <span>Details:</span>
-    <span>...</span>
+    <table style="font-size:60%">
+        <tr>
+            <td>Position X:</td>
+            <td>@Data.X</td>
+        </tr>
+        <tr>
+            <td>Position Y:</td>
+            <td>@Data.Y</td>
+        </tr>
+        <tr>
+            <td>Width:</td>
+            <td>@Data.Width</td>
+        </tr>
+        <tr>
+            <td>Created at:</td>
+            <td>@Data.CreatedAt.DateTime</td>
+        </tr>
+    </table>
 </div>
+<button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>
 
 @code {
     [Parameter, EditorRequired]
     public required StartSymbolData Data { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<SymbolData> OnDelete { get; set; }
 
     private string? DisplayName
     {

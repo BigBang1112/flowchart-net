@@ -2,8 +2,12 @@
 @inject EventBroadcastService EventBroadcast
 
 <div class="property-group">
-    <label for="display_name">Display name:</label>
-    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" name="display_name" />
+    <label>Condition:</label>
+    <input type="text" value="@Condition" @oninput="e => Condition = e.Value?.ToString()" @onchange="e => SetConditionAsync(e.Value?.ToString())" />
+</div>
+<div class="property-group">
+    <label>Display name:</label>
+    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" />
 </div>
 <div class="property-group">
     <span>When true:</span>
@@ -34,10 +38,54 @@
         }
     }
 </div>
+<div class="property-group">
+    <span>Details:</span>
+    <table style="font-size:60%">
+        <tr>
+            <td>Position X:</td>
+            <td>@Data.X</td>
+        </tr>
+        <tr>
+            <td>Position Y:</td>
+            <td>@Data.Y</td>
+        </tr>
+        <tr>
+            <td>Width:</td>
+            <td>@Data.Width</td>
+        </tr>
+        <tr>
+            <td>Height:</td>
+            <td>@Data.Height</td>
+        </tr>
+        <tr>
+            <td>Scale X:</td>
+            <td>@Data.ScaleX</td>
+        </tr>
+        <tr>
+            <td>Created at:</td>
+            <td>@Data.CreatedAt.DateTime</td>
+        </tr>
+    </table>
+</div>
+<button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>
 
 @code {
     [Parameter, EditorRequired]
     public required DecisionSymbolData Data { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<SymbolData> OnDelete { get; set; }
+
+    private string? Condition
+    {
+        get => Data.Condition;
+        set
+        {
+            Data.Condition = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
 
     private string? DisplayName
     {
@@ -48,6 +96,12 @@
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
+    }
+
+    private async Task SetConditionAsync(string? value)
+    {
+        Condition = value;
+        await AppState.PersistAsync();
     }
 
     private async Task SetDisplayNameAsync(string? value)

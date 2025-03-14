@@ -5,7 +5,8 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main @ondragover="OnDragOver"
+<main
+@ondragover="OnDragOver"
 @onclick="OnClickAsync"
 @ondragover:preventDefault="true" 
 @onmousemove="OnMouseMoveAsync"
@@ -39,6 +40,7 @@
     {
         objRef = DotNetObjectReference.Create(this);
         EventBroadcast.WorkspaceUpdate += () => StateHasChanged();
+        EventBroadcast.SymbolDelete += async (symbol) => await DeleteSymbolAsync(symbol);
         return base.OnInitializedAsync();
     }
 
@@ -138,7 +140,8 @@
             { "Data", data },
             { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDownAsync) },
             { "OnPointClick", EventCallback.Factory.Create<PointClickEventArgs>(this, OnSymbolPointClickAsync) },
-            { "Selected", AppState.SelectedSymbolId == data.Id }
+            { "OnKeyDown", EventCallback.Factory.Create<KeyboardEventArgs>(this, OnKeyDown) },
+            { "Selected", AppState.SelectedSymbolId == data.Id },
             };
 
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
@@ -205,6 +208,56 @@
     private async Task OnScrollAsync()
     {
         await UpdateLinePositionsAsync();
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Delete")
+        {
+            await DeleteSelectedSymbolAsync();
+        }
+    }
+
+    private async Task DeleteSelectedSymbolAsync()
+    {
+        await DeleteSymbolAsync(AppState.SelectedSymbolId);
+    }
+
+    private async Task DeleteSymbolAsync(Guid? symbolId)
+    {
+        var symbol = AppState.Symbols.FirstOrDefault(x => x.Id == symbolId);
+
+        if (symbol is null)
+        {
+            return;
+        }
+
+        await DeleteSymbolAsync(symbol);
+    }
+
+    private async Task DeleteSymbolAsync(SymbolData symbol)
+    {
+        var connectedSymbols = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(symbol.Id));
+
+        foreach (var connectedSymbol in connectedSymbols)
+        {
+            var line = lines[(connectedSymbol.Id, symbol.Id)];
+            await line.InvokeVoidAsync("remove");
+            connectedSymbol.RemoveConnection(symbol.Id);
+            lines.Remove((connectedSymbol.Id, symbol.Id));
+        }
+
+        AppState.Symbols.Remove(symbol);
+
+        if (AppState.SelectedSymbolId == symbol.Id)
+        {
+            AppState.SelectedSymbolId = null;
+            AppState.IsPropertiesOpen = false;
+            EventBroadcast.UpdateProperties();
+        }
+
+        StateHasChanged(); // necessary
+        await AppState.PersistAsync();
     }
 
     private async Task OnSymbolPointClickAsync(PointClickEventArgs e)

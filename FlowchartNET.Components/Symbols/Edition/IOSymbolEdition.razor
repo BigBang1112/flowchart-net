@@ -2,8 +2,28 @@
 @inject EventBroadcastService EventBroadcast
 
 <div class="property-group">
-    <label for="display_name">Display name:</label>
-    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" name="display_name" />
+    <label>Variable name:</label>
+    <input type="text" value="@VariableName" @oninput="e => VariableName = e.Value?.ToString()" @onchange="e => SetVariableNameAsync(e.Value?.ToString())" />
+</div>
+<div class="property-group">
+    <InputRadioGroup @bind-Value="IsInput">
+        <div>
+            <InputRadio id="io_edition_input" Value="@true" />
+            <label for="io_edition_input">Input</label>
+        </div>
+        <div>
+            <InputRadio id="io_edition_output" Value="@false" />
+            <label for="io_edition_output">Output</label>
+        </div>
+    </InputRadioGroup>
+</div>
+<div class="property-group">
+    <label>Output format:</label>
+    <input type="text" value="@OutputFormat" @oninput="e => OutputFormat = e.Value?.ToString()" @onchange="e => SetOutputFormatAsync(e.Value?.ToString())" disabled="@IsInput" />
+</div>
+<div class="property-group">
+    <label>Display name:</label>
+    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" />
 </div>
 <div class="property-group">
     @if (Data.NextSymbols.Count > 1)
@@ -27,10 +47,46 @@
         }
     }
 </div>
+<div class="property-group">
+    <span>Details:</span>
+    <table style="font-size:60%">
+        <tr>
+            <td>Position X:</td>
+            <td>@Data.X</td>
+        </tr>
+        <tr>
+            <td>Position Y:</td>
+            <td>@Data.Y</td>
+        </tr>
+        <tr>
+            <td>Width:</td>
+            <td>@Data.Width</td>
+        </tr>
+        <tr>
+            <td>Created at:</td>
+            <td>@Data.CreatedAt.DateTime</td>
+        </tr>
+    </table>
+</div>
+<button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>
 
 @code {
     [Parameter, EditorRequired]
     public required IOSymbolData Data { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<SymbolData> OnDelete { get; set; }
+
+    private string? VariableName
+    {
+        get => Data.VariableName;
+        set
+        {
+            Data.VariableName = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
 
     private string? DisplayName
     {
@@ -43,9 +99,51 @@
         }
     }
 
+    private string? OutputFormat
+    {
+        get => Data.OutputFormat == string.Empty ? "{0}" : Data.OutputFormat;
+        set
+        {
+            Data.OutputFormat = value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
+
+    private bool IsInput
+    {
+        get => Data.OutputFormat is null;
+        set
+        {
+            if (value)
+            {
+                Data.OutputFormat = null;
+            }
+            else if (Data.OutputFormat is null)
+            {
+                Data.OutputFormat = string.Empty;
+            }
+
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
+
+    private async Task SetVariableNameAsync(string? value)
+    {
+        VariableName = value;
+        await AppState.PersistAsync();
+    }
+
     private async Task SetDisplayNameAsync(string? value)
     {
         DisplayName = value;
+        await AppState.PersistAsync();
+    }
+
+    private async Task SetOutputFormatAsync(string? value)
+    {
+        OutputFormat = value;
         await AppState.PersistAsync();
     }
 
