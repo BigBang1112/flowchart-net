@@ -51,6 +51,46 @@ section {
         background-color: #666;
     }
 
+.button-tech {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 1rem;
+    transition: background-color 0.05s ease;
+    background-color: #444;
+    padding: 0.2rem;
+}
+
+    .button-tech:hover {
+        background-color: #8888;
+    }
+
+    .button-tech.active {
+        background-color: #777;
+    }
+
+.button-fill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 1rem;
+    transition: background-color 0.05s ease;
+    background-color: #222;
+    height: 3rem;
+    font-weight: bold;
+    border-bottom: 2px solid #444;
+}
+
+    .button-fill:hover {
+        background-color: #6666;
+    }
+
+    .button-fill.active {
+        background-color: #666;
+    }
+
 menu {
     display: flex;
     list-style-type: none;
@@ -129,8 +169,39 @@ aside {
         width: 13rem;
         padding: 1rem;
         overflow: hidden;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
     }
 
+input[type=text], input.text, select {
+    border: 1px solid #333;
+    font-family: inherit;
+    border-radius: 5px;
+    color: inherit;
+    padding: 2px 10px;
+    height: 32px;
+    background-color: #222;
+    font-size: inherit;
+    text-align: inherit;
+}
+
+    input[type=text]:hover, input.text:hover, select:hover {
+        border-color: #444;
+        background-color: #333;
+    }
+
+select {
+    height: 38px;
+    cursor: pointer;
+}
+
+div.property-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 
 h1 {
     display: flex;

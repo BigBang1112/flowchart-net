@@ -10,7 +10,7 @@ public sealed class AppState
 
     public string? MenuSelectedSymbolId { get; set; }
     public Guid? SelectedSymbolId { get; set; }
-    public bool IsOptionsOpen { get; set; }
+    public bool IsPropertiesOpen { get; set; }
 
     public List<SymbolData> Symbols { get; set; } = [];
 
@@ -24,5 +24,10 @@ public sealed class AppState
         await using var scope = serviceProvider.CreateAsyncScope();
         var localStorage = scope.ServiceProvider.GetRequiredService<ILocalStorageService>();
         await localStorage.SetItemAsync("state", this, cancellationToken);
+    }
+
+    public SymbolData? GetSelectedSymbol()
+    {
+        return Symbols.FirstOrDefault(s => s.Id == SelectedSymbolId);
     }
 }

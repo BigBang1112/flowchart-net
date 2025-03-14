@@ -23,19 +23,19 @@ public sealed class DecisionSymbolData : SymbolData
     /// </summary>
     public string? Condition { get; set; }
 
-    public HashSet<Guid> TrueBranches { get; set; } = [];
-    public HashSet<Guid> FalseBranches { get; set; } = [];
+    public HashSet<Guid> TrueSymbols { get; set; } = [];
+    public HashSet<Guid> FalseSymbols { get; set; } = [];
 
     public override string GetLabel() => DisplayName ?? Condition ?? "Decision";
 
     public override IEnumerable<Guid> GetConnectedSymbolIds()
     {
-        foreach (var trueBranch in TrueBranches)
+        foreach (var trueBranch in TrueSymbols)
         {
             yield return trueBranch;
         }
 
-        foreach (var falseBranch in FalseBranches)
+        foreach (var falseBranch in FalseSymbols)
         {
             yield return falseBranch;
         }
@@ -43,7 +43,7 @@ public sealed class DecisionSymbolData : SymbolData
 
     public override void RemoveConnection(Guid symbolId)
     {
-        TrueBranches.Remove(symbolId);
-        FalseBranches.Remove(symbolId);
+        TrueSymbols.Remove(symbolId);
+        FalseSymbols.Remove(symbolId);
     }
 }

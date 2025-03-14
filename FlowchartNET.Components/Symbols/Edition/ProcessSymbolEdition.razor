@@ -1,7 +1,58 @@
-﻿<p>ProcessSymbolEdition</p>
-<p>@Data</p>
+﻿@inject AppState AppState
+@inject EventBroadcastService EventBroadcast
+
+<div class="property-group">
+    <label for="display_name">Display name:</label>
+    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" name="display_name" />
+</div>
+<div class="property-group">
+    @if (Data.NextSymbols.Count > 1)
+    {
+        <span>Next symbols:</span>
+    }
+    else
+    {
+        <span>Next symbol:</span>
+    }
+
+    @if (Data.NextSymbols.Count == 0)
+    {
+        <span>None</span>
+    }
+    else
+    {
+        @foreach (var nextSymbol in Data.NextSymbols)
+        {
+            <button class="button-tech" style="font-size: 60%;" @onclick="() => SwitchToSymbol(nextSymbol)">@nextSymbol</button>
+        }
+    }
+</div>
 
 @code {
     [Parameter, EditorRequired]
     public required ProcessSymbolData Data { get; set; }
+
+    private string? DisplayName
+    {
+        get => Data.DisplayName;
+        set
+        {
+            Data.DisplayName = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
+
+    private async Task SetDisplayNameAsync(string? value)
+    {
+        DisplayName = value;
+        await AppState.PersistAsync();
+    }
+
+    private void SwitchToSymbol(Guid symbolId)
+    {
+        AppState.SelectedSymbolId = symbolId;
+        EventBroadcast.UpdateProperties();
+        EventBroadcast.UpdateWorkspace();
+    }
 }

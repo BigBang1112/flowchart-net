@@ -1,0 +1,44 @@
+@inject AppState AppState
+@inject EventBroadcastService EventBroadcast
+
+<aside class="@(AppState.IsPropertiesOpen ? "open" : "")">
+    <div class="opener" @onclick="() => AppState.IsPropertiesOpen = !AppState.IsPropertiesOpen">
+        <img class="@(AppState.IsPropertiesOpen ? "open" : "")" src="_content/FlowchartNET.Components/img/icons/chevron_left.svg" width="48" height="48" />
+        <span>Symbol</span>
+    </div>
+    <div class="contents">
+        @if (Symbol is not null)
+        {
+            <div class="symbol @GetSelectedSymbolClass()">
+                <div class="shape preview"></div>
+                <span>@Symbol.GetLabel()</span>
+            </div>
+            <DynamicComponent Type="Symbol.EditionComponentType" Parameters="GetSymbolEditionComponentParameters(Symbol)"></DynamicComponent>
+        }
+    </div>
+</aside>
+
+@code {
+    public SymbolData? Symbol => AppState.GetSelectedSymbol();
+
+    private string GetSelectedSymbolClass() => Symbol switch
+    {
+        StartSymbolData or EndSymbolData => "symbol-terminal",
+        ProcessSymbolData => "symbol-process",
+        IOSymbolData => "symbol-io",
+        DecisionSymbolData => "symbol-decision",
+        _ => ""
+    };
+
+    private Dictionary<string, object> GetSymbolEditionComponentParameters(SymbolData data) =>
+        new Dictionary<string, object>
+        {
+            { "Data", data }
+        };
+
+    protected override Task OnInitializedAsync()
+    {
+        EventBroadcast.PropertiesUpdate += () => StateHasChanged();
+        return base.OnInitializedAsync();
+    }
+}

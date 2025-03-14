@@ -22,26 +22,7 @@
     }
 
 </main>
-<aside class="@(AppState.IsOptionsOpen ? "open" : "")">
-    <div class="opener" @onclick="() => AppState.IsOptionsOpen = !AppState.IsOptionsOpen">
-        <img class="@(AppState.IsOptionsOpen ? "open" : "")" src="_content/FlowchartNET.Components/img/icons/chevron_left.svg" width="48" height="48" />
-        <span>Symbol</span>
-    </div>
-    <div class="contents">
-        @{
-            var selectedSymbol = GetSelectedSymbol();
-        }
 
-        @if (selectedSymbol is not null)
-        {
-            <div class="symbol @GetSelectedSymbolClass()">
-                <div class="shape preview"></div>
-                <span>@selectedSymbol.GetLabel()</span>
-            </div>
-            <DynamicComponent Type="selectedSymbol.EditionComponentType" Parameters="GetSymbolEditionComponentParameters(selectedSymbol)"></DynamicComponent>
-        }
-    </div>
-</aside>
 @code {
     private IJSObjectReference? module;
 
@@ -54,20 +35,12 @@
     private PointClickEventArgs? currentConnectorEvent;
     private Dictionary<(Guid FromSymbolId, Guid ToSymbolId), IJSObjectReference> lines = [];
 
-    private SymbolData? GetSelectedSymbol() =>
-        AppState.Symbols.FirstOrDefault(x => x.Id == AppState.SelectedSymbolId);
-
-    private string GetSelectedSymbolClass() => GetSelectedSymbol() switch
+    protected override Task OnInitializedAsync()
     {
-        StartSymbolData or EndSymbolData => "symbol-terminal",
-        ProcessSymbolData => "symbol-process",
-        IOSymbolData => "symbol-io",
-        DecisionSymbolData => "symbol-decision",
-        _ => ""
-    };
-
-    protected override void OnInitialized() =>
         objRef = DotNetObjectReference.Create(this);
+        EventBroadcast.WorkspaceUpdate += () => StateHasChanged();
+        return base.OnInitializedAsync();
+    }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -150,10 +123,11 @@
         AppState.Symbols.AddRange(addedSymbols);
         AppState.MenuSelectedSymbolId = null;
         AppState.SelectedSymbolId = addedSymbols.FirstOrDefault()?.Id;
-        AppState.IsOptionsOpen = true;
+        AppState.IsPropertiesOpen = true;
 
         EventBroadcast.UpdateMenu();
-        StateHasChanged();
+        EventBroadcast.UpdateProperties();
+        StateHasChanged(); // probably not needed?
 
         await AppState.PersistAsync();
     }
@@ -167,12 +141,6 @@
             { "Selected", AppState.SelectedSymbolId == data.Id }
             };
 
-    private Dictionary<string, object> GetSymbolEditionComponentParameters(SymbolData data) =>
-        new Dictionary<string, object>
-            {
-            { "Data", data }
-            };
-
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
     {
         currentlyDraggedSymbolOffsetX = e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX);
@@ -180,6 +148,7 @@
         currentlyDraggedSymbol = e.Draggable;
         AppState.SelectedSymbolId = e.Draggable.Id;
 
+        EventBroadcast.UpdateProperties();
         await AppState.PersistAsync();
     }
 
@@ -212,7 +181,8 @@
     private async Task OnMouseDownAsync()
     {
         AppState.SelectedSymbolId = null;
-        AppState.IsOptionsOpen = false;
+        AppState.IsPropertiesOpen = false;
+        EventBroadcast.UpdateProperties();
         await AppState.PersistAsync();
     }
 
@@ -222,7 +192,9 @@
         {
             currentlyDraggedSymbol.IsDragging = false;
             currentlyDraggedSymbol = null;
-            AppState.IsOptionsOpen = true;
+
+            AppState.IsPropertiesOpen = true;
+            EventBroadcast.UpdateProperties();
 
             await UpdateLinePositionsAsync();
 

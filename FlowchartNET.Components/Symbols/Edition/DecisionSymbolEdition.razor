@@ -1,7 +1,65 @@
-﻿<p>DecisionSymbolEdition</p>
-<p>@Data</p>
+﻿@inject AppState AppState
+@inject EventBroadcastService EventBroadcast
+
+<div class="property-group">
+    <label for="display_name">Display name:</label>
+    <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" name="display_name" />
+</div>
+<div class="property-group">
+    <span>When true:</span>
+
+    @if (Data.TrueSymbols.Count == 0)
+    {
+        <span>None</span>
+    }
+    else
+    {
+        @foreach (var nextSymbol in Data.TrueSymbols)
+        {
+            <button class="button-tech" style="font-size: 60%;" @onclick="() => SwitchToSymbol(nextSymbol)">@nextSymbol</button>
+        }
+    }
+</div>
+<div class="property-group">
+    <span>When false:</span>
+    @if (Data.FalseSymbols.Count == 0)
+    {
+        <span>None</span>
+    }
+    else
+    {
+        @foreach (var nextSymbol in Data.FalseSymbols)
+        {
+            <button class="button-tech" style="font-size: 60%;" @onclick="() => SwitchToSymbol(nextSymbol)">@nextSymbol</button>
+        }
+    }
+</div>
 
 @code {
     [Parameter, EditorRequired]
     public required DecisionSymbolData Data { get; set; }
+
+    private string? DisplayName
+    {
+        get => Data.DisplayName;
+        set
+        {
+            Data.DisplayName = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+            EventBroadcast.UpdateWorkspace();
+        }
+    }
+
+    private async Task SetDisplayNameAsync(string? value)
+    {
+        DisplayName = value;
+        await AppState.PersistAsync();
+    }
+
+    private void SwitchToSymbol(Guid symbolId)
+    {
+        AppState.SelectedSymbolId = symbolId;
+        EventBroadcast.UpdateProperties();
+        EventBroadcast.UpdateWorkspace();
+    }
 }
