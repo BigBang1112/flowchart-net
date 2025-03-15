@@ -17,10 +17,13 @@
         </div>
     </InputRadioGroup>
 </div>
-<div class="property-group">
-    <label>Output format:</label>
-    <input type="text" value="@OutputFormat" @oninput="e => OutputFormat = e.Value?.ToString()" @onchange="e => SetOutputFormatAsync(e.Value?.ToString())" disabled="@IsInput" />
-</div>
+@if (!IsInput)
+{
+    <div class="property-group">
+        <label>Output format:</label>
+        <input type="text" value="@OutputFormat" @oninput="e => OutputFormat = e.Value?.ToString()" @onchange="e => SetOutputFormatAsync(e.Value?.ToString())" disabled="@IsInput" />
+    </div>
+}
 <div class="property-group">
     <label>Display name:</label>
     <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" />

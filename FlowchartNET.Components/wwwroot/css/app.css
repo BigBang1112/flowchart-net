@@ -15,6 +15,20 @@ html, body {
     color: var(--white);
 }
 
+body {
+    transition: filter 0.5s ease;
+}
+
+    body.light {
+        filter: invert(1) hue-rotate(180deg);
+    }
+
+@media (prefers-color-scheme: light) {
+    body:not(.light) {
+        filter: invert(1) hue-rotate(180deg);
+    }
+}
+
 button {
     all: unset;
 }

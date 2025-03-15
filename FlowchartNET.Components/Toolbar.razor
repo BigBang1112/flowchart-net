@@ -1,3 +1,6 @@
+@implements IAsyncDisposable
+@inject ModuleHelper ModuleHelper
+
 <div class="toolbar">
     <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="Add" />
     <ToolbarItem ImageUrl="folder_open.svg" ImageAlt="Open" />
@@ -15,6 +18,46 @@
     <ToolbarItem ImageUrl="sdk.svg" ImageAlt="Mode">
         <span class="screen-medium">Mode: <b>Logical</b></span>
     </ToolbarItem>
-    <ToolbarItem ImageUrl="light_mode.svg" ImageAlt="Light Mode" AdditionalCssClass="align-right" />
+    <ToolbarItem ImageUrl="light_mode.svg" ImageAlt="Light Mode" AdditionalCssClass="align-right" OnClick="ToggleThemeAsync" />
 </div>
 <ToolbarItem ImageUrl="menu.svg" ImageAlt="Menu" AdditionalCssClass="burger align-right" />
+
+@code {
+    private IJSObjectReference? module;
+
+    private bool toggleTheme;
+
+    private async Task ToggleThemeAsync()
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        toggleTheme = !toggleTheme;
+
+        await module.InvokeVoidAsync("toggleTheme", toggleTheme);
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await ModuleHelper.ImportAsync(nameof(Toolbar));
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module is not null)
+        {
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+    }
+}

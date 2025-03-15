@@ -345,7 +345,17 @@
 
         foreach (var line in lines.Values)
         {
-            await line.InvokeVoidAsync("position");
+            try
+            {
+                if (line is not null)
+                {
+                    await line.InvokeVoidAsync("position");
+                }
+            }
+            catch
+            {
+                // Dont update position in case of bad line update timing
+            }
         }
     }
 

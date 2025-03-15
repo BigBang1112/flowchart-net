@@ -1,4 +1,4 @@
-<button class="button-noborder @AdditionalCssClass">
+<button class="button-noborder @AdditionalCssClass" @onclick="OnClick">
     <img src="_content/FlowchartNET.Components/img/icons/@ImageUrl" alt="@ImageAlt" draggable="false" width="@ImageWidth" height="@ImageHeight" />
     @ChildContent
 </button>
@@ -39,4 +39,7 @@
     /// </summary>
     [Parameter]
     public string AdditionalCssClass { get; set; } = "";
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
 }
