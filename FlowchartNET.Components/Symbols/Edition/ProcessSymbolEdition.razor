@@ -54,6 +54,10 @@
             <td>Created at:</td>
             <td>@Data.CreatedAt.DateTime</td>
         </tr>
+        <tr>
+            <td>Bottom to top:</td>
+            <td>@Data.IsBottomToTop</td>
+        </tr>
     </table>
 </div>
 <button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>

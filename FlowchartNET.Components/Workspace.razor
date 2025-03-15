@@ -237,9 +237,17 @@
 
     private async Task DeleteSymbolAsync(SymbolData symbol)
     {
-        var connectedSymbols = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(symbol.Id));
+        foreach (var connectedSymbolId in symbol.GetConnectedSymbolIds())
+        {
+            var line = lines[(symbol.Id, connectedSymbolId)];
+            await line.InvokeVoidAsync("remove");
+            symbol.RemoveConnection(connectedSymbolId);
+            lines.Remove((symbol.Id, connectedSymbolId));
+        }
 
-        foreach (var connectedSymbol in connectedSymbols)
+        var otherConnectedSymbols = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(symbol.Id));
+
+        foreach (var connectedSymbol in otherConnectedSymbols)
         {
             var line = lines[(connectedSymbol.Id, symbol.Id)];
             await line.InvokeVoidAsync("remove");
@@ -256,7 +264,7 @@
             EventBroadcast.UpdateProperties();
         }
 
-        StateHasChanged(); // necessary
+        StateHasChanged(); // necessary due to external calls
         await AppState.PersistAsync();
     }
 
@@ -269,7 +277,12 @@
 
         if (currentConnectorEvent is null)
         {
-            if (e.Connector is null)
+            if (e.ConnectFrom.Invoke())
+            {
+                currentConnectorEvent = e;
+                await module.InvokeVoidAsync("startLine", e.Element, e.Socket);
+            }
+            else // delete otherwise
             {
                 // Gets all symbols that are connected to the clicked symbol
                 var allConnected = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
@@ -288,12 +301,8 @@
                     connectedSymbol.RemoveConnection(e.Symbol.Id);
                     lines.Remove((connectedSymbol.Id, e.Symbol.Id));
                 }
-
-                return;
             }
 
-            currentConnectorEvent = e;
-            await module.InvokeVoidAsync("startLine", e.Element, e.Socket);
             return;
         }
 
@@ -304,12 +313,6 @@
             return;
         }
 
-        // if the point is of the kind where arrows are coming from, cannot connect to that one
-        if (e.Connector is not null)
-        {
-            return;
-        }
-
         // if the same symbol connection already exists, do not create a new one
         // makes sense even for Decision, cannot reasonably connect from two branches to the same symbol
         if (lines.ContainsKey((currentConnectorEvent.Symbol.Id, e.Symbol.Id)))
@@ -317,9 +320,14 @@
             return;
         }
 
-        var completedLine = await module.InvokeAsync<IJSObjectReference>("endLine", e.Element, e.Socket);
+        if (!e.ConnectTo.Invoke())
+        {
+            return;
+        }
 
-        currentConnectorEvent.Connector?.Invoke(new LineConnection(e.Symbol.Id));
+        currentConnectorEvent.Connection?.Invoke(new LineConnection(e.Symbol.Id, e.Socket));
+
+        var completedLine = await module.InvokeAsync<IJSObjectReference>("endLine", e.Element, e.Socket);
 
         lines.Add((currentConnectorEvent.Symbol.Id, e.Symbol.Id), completedLine);
 

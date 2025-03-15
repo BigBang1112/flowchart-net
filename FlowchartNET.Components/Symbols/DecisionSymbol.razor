@@ -9,20 +9,22 @@
     @ontouchstart="TouchStartAsync"
     @ontouchstart:preventDefault="true"></div>
     <span>@Data.GetLabel()</span>
+    <span class="yes" style="right: -2rem;top: calc(50% - 1.5rem);">Yes</span>
+    <span class="no" style="bottom: -1.5rem;left: calc(50% - 2rem);">No</span>
     <div class="connect connect-top connect-top-decision" 
-         @onclick="() => OnPointClickAsync(socketTop)"
+         @onclick="() => OnPointClickAsync(socketTop, connectFrom: () => false, connectTo: () => true)"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-bottom connect-bottom-decision" 
-         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.FalseSymbols.Add(conn.DestSymbolId); })"
+         @onclick="() => OnPointClickAsync(socketBottom, connectFrom: () => true, connectTo: () => false, conn => Data.FalseSymbols.Add(conn.DestSymbolId))"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-left-decision"
-         @onclick="() => OnPointClickAsync(socketLeft, conn => { Data.TrueSymbols.Add(conn.DestSymbolId); })"
+         @onclick="() => OnPointClickAsync(socketLeft, connectFrom: () => true, connectTo: () => false, conn => Data.TrueSymbols.Add(conn.DestSymbolId))"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-right-decision"
-         @onclick="() => OnPointClickAsync(socketRight, conn => { Data.TrueSymbols.Add(conn.DestSymbolId); })"
+         @onclick="() => OnPointClickAsync(socketRight, connectFrom: () => true, connectTo: () => false, conn => Data.TrueSymbols.Add(conn.DestSymbolId))"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>
@@ -73,8 +75,8 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
-    private async Task OnPointClickAsync(string socket, Action<LineConnection>? connector = null)
+    private async Task OnPointClickAsync(string socket, Func<bool> connectFrom, Func<bool> connectTo, Action<LineConnection>? connection = null)
     {
-        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connector));
+        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connectFrom, connectTo, connection));
     }
 }

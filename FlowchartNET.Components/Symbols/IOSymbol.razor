@@ -11,11 +11,11 @@
          @ontouchstart:preventDefault="true"></div>
     <span>@Data.GetLabel()</span>
     <div class="connect connect-top connect-top-io"
-         @onclick="() => OnPointClickAsync(socketTop)"
+         @onclick="() => OnPointClickAsync(socketTop, connectFrom: () => false, connectTo: () => true)"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
     <div class="connect connect-bottom connect-bottom-io"
-         @onclick="() => OnPointClickAsync(socketBottom, conn => { Data.NextSymbols.Add(conn.DestSymbolId); })"
+         @onclick="() => OnPointClickAsync(socketBottom, connectFrom: () => true, connectTo: () => false, conn => Data.NextSymbols.Add(conn.DestSymbolId))"
          @onclick:stopPropagation="true"
          @onmousedown:preventDefault="true"></div>
 </div>
@@ -65,8 +65,8 @@
         await OnMouseDown.InvokeAsync(new SymbolDragEventArgs(this, e.Touches[0].ClientX, e.Touches[0].ClientY));
     }
 
-    private async Task OnPointClickAsync(string socket, Action<LineConnection>? connector = null)
+    private async Task OnPointClickAsync(string socket, Func<bool> connectFrom, Func<bool> connectTo, Action<LineConnection>? connection = null)
     {
-        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connector));
+        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connectFrom, connectTo, connection));
     }
 }

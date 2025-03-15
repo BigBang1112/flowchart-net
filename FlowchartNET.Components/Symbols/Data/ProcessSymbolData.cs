@@ -28,6 +28,8 @@ public sealed class ProcessSymbolData : SymbolData
 
     public HashSet<Guid> NextSymbols { get; set; } = [];
 
+    public bool IsBottomToTop { get; set; }
+
     public override string GetLabel() => DisplayName ?? (VariableName is null ? Process : $"{VariableName} = {Process}") ?? "Process";
 
     public override IEnumerable<Guid> GetConnectedSymbolIds() => NextSymbols;
