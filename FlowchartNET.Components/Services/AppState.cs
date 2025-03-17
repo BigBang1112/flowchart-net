@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using FlowchartNET.Components.Simulation;
 using FlowchartNET.Components.Symbols.Data;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,8 @@ public sealed class AppState
     public bool IsPropertiesOpen { get; set; }
 
     public List<SymbolData> Symbols { get; set; } = [];
+
+    public SimulationState Simulation { get; set; } = new();
 
     public AppState(IServiceProvider serviceProvider)
     {
