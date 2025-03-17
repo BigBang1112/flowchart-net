@@ -28,15 +28,27 @@
     }
 </div>
 
-<h3>Simulation</h3>
-<span>Inputs</span>
-<ul>
-    @foreach (var input in AppState.GetInputVariables(Data))
+<div class="property-group">
+
+    <span>Simulation</span>
+
+    @if (AppState.GetInputVariables(Data).Any())
     {
-        <li>@input.GetLabel()</li>
+        <div class="grid">
+            @foreach (var input in AppState.GetInputVariables(Data))
+            {
+                <div>@input.GetLabel():</div>
+                <input type="text" size="1" />
+            }
+        </div>
     }
-</ul>
-<button class="button-fill">Simulate</button>
+    else
+    {
+        <small>No input variables. Please connect this symbol with at least one Input symbol.</small>
+    }
+
+    <button class="button-fill">Simulate</button>
+</div>
 
 <div class="property-group">
     <span>Details:</span>

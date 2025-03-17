@@ -1,0 +1,13 @@
+div.grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    font-size: 80%;
+    justify-items: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    div.grid > input {
+        width: 100%;
+        box-sizing: border-box;
+    }
