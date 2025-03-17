@@ -23,6 +23,11 @@ public sealed class IOSymbolData : SymbolData
     /// </summary>
     public string? OutputFormat { get; set; }
 
+    /// <summary>
+    /// The value to simulate for this symbol. This value will be modified if the symbol is an output.
+    /// </summary>
+    public string? SimulationValue { get; set; }
+
     public HashSet<Guid> NextSymbols { get; set; } = [];
 
     public override string GetLabel() => DisplayName ?? VariableName ?? (OutputFormat is null ? "Input" : "Output");

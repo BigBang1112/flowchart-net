@@ -25,6 +25,10 @@
     </div>
 }
 <div class="property-group">
+    <label>Simulation value:</label>
+    <input type="text" value="@SimulationValue" @oninput="e => SimulationValue = e.Value?.ToString()" @onchange="e => SetSimulationValueAsync(e.Value?.ToString())" disabled="@(!IsInput)" />
+</div>
+<div class="property-group">
     <label>Display name:</label>
     <input type="text" value="@DisplayName" @oninput="e => DisplayName = e.Value?.ToString()" @onchange="e => SetDisplayNameAsync(e.Value?.ToString())" />
 </div>
@@ -132,6 +136,16 @@
         }
     }
 
+    private string? SimulationValue
+    {
+        get => Data.SimulationValue;
+        set
+        {
+            Data.SimulationValue = value == string.Empty ? null : value;
+            EventBroadcast.UpdateProperties();
+        }
+    }
+
     private async Task SetVariableNameAsync(string? value)
     {
         VariableName = value;
@@ -147,6 +161,12 @@
     private async Task SetOutputFormatAsync(string? value)
     {
         OutputFormat = value;
+        await AppState.PersistAsync();
+    }
+
+    private async Task SetSimulationValueAsync(string? value)
+    {
+        SimulationValue = value;
         await AppState.PersistAsync();
     }
 

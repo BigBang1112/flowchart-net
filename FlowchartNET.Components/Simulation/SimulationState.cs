@@ -2,5 +2,5 @@
 
 public sealed class SimulationState
 {
-    public Dictionary<Guid, object> InputValues { get; set; } = [];
+    
 }
