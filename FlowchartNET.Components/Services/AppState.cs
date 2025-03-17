@@ -37,12 +37,14 @@ public sealed class AppState
 
     public IEnumerable<IOSymbolData> GetInputVariables(StartSymbolData startSymbol)
     {
-        return RecurseConnectedIOSymbols(startSymbol, Symbols)
+        var alreadyVisited = new HashSet<Guid>();
+
+        return RecurseConnectedIOSymbols(startSymbol, Symbols, alreadyVisited)
             .Where(s => s.OutputFormat is null);
     }
 
-    private static IEnumerable<IOSymbolData> RecurseConnectedIOSymbols(SymbolData symbol, List<SymbolData> symbols)
-    {        
+    private static IEnumerable<IOSymbolData> RecurseConnectedIOSymbols(SymbolData symbol, List<SymbolData> symbols, HashSet<Guid> alreadyVisited)
+    {
         foreach (var connectedSymbolId in symbol.GetConnectedSymbolIds())
         {
             var connectedSymbol = symbols.FirstOrDefault(s => s.Id == connectedSymbolId);
@@ -52,12 +54,17 @@ public sealed class AppState
                 continue;
             }
 
+            if (!alreadyVisited.Add(connectedSymbol.Id))
+            {
+                continue;
+            }
+
             if (connectedSymbol is IOSymbolData ioSymbol)
             {
                 yield return ioSymbol;
             }
 
-            foreach (var s in RecurseConnectedIOSymbols(connectedSymbol, symbols))
+            foreach (var s in RecurseConnectedIOSymbols(connectedSymbol, symbols, alreadyVisited))
             {
                 yield return s;
             }
