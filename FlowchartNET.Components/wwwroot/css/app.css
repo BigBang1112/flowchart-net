@@ -223,6 +223,10 @@ div.property-group {
     gap: 0.5rem;
 }
 
+table.details {
+    font-size: 60%;
+}
+
 h1 {
     display: flex;
     align-items: center;

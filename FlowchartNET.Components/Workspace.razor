@@ -5,7 +5,7 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main
+<main style="zoom: @((AppState.Zoom * 100).ToString(System.Globalization.CultureInfo.InvariantCulture))%"
 @ondragover="OnDragOver"
 @onclick="OnClickAsync"
 @ondragover:preventDefault="true" 
@@ -67,8 +67,8 @@
 
         if (AppState.MenuSelectedSymbolId is not null)
         {
-            var mouseX = WorkspaceModule.GetMouseX(e.ClientX);
-            var mouseY = WorkspaceModule.GetMouseY(e.ClientY);
+            var mouseX = WorkspaceModule.GetMouseX(e.ClientX) * AppState.Zoom;
+            var mouseY = WorkspaceModule.GetMouseY(e.ClientY) * AppState.Zoom;
 
             await AddSymbolAsync(AppState.MenuSelectedSymbolId, mouseX, mouseY);
         }
@@ -83,6 +83,9 @@
     [JSInvokable]
     public async Task AddSymbolAsync(string symbolId, double x, double y)
     {
+        x /= AppState.Zoom;
+        y /= AppState.Zoom;
+
         var addedSymbols = new List<SymbolData>();
 
         switch (symbolId)
@@ -146,8 +149,8 @@
 
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
     {
-        currentlyDraggedSymbolOffsetX = e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX);
-        currentlyDraggedSymbolOffsetY = e.Draggable.Y - WorkspaceModule.GetMouseY(e.ClientY);
+        currentlyDraggedSymbolOffsetX = (e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX) / AppState.Zoom) * AppState.Zoom;
+        currentlyDraggedSymbolOffsetY = (e.Draggable.Y - WorkspaceModule.GetMouseY(e.ClientY) / AppState.Zoom) * AppState.Zoom;
         currentlyDraggedSymbol = e.Draggable;
         AppState.SelectedSymbolId = e.Draggable.Id;
 
@@ -174,8 +177,8 @@
     {
         if (currentlyDraggedSymbol is not null)
         {
-            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(clientX) + currentlyDraggedSymbolOffsetX);
-            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(clientY) + currentlyDraggedSymbolOffsetY);
+            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(clientX) + currentlyDraggedSymbolOffsetX) / AppState.Zoom;
+            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(clientY) + currentlyDraggedSymbolOffsetY) / AppState.Zoom;
 
             await UpdateLinePositionsAsync();
         }
@@ -280,7 +283,7 @@
             if (e.ConnectFrom.Invoke())
             {
                 currentConnectorEvent = e;
-                await module.InvokeVoidAsync("startLine", e.Element, e.Socket);
+                await module.InvokeVoidAsync("startLine", e.Element, e.Socket, AppState.Zoom);
             }
             else // delete otherwise
             {
@@ -349,7 +352,7 @@
             {
                 if (line is not null)
                 {
-                    await line.InvokeVoidAsync("position");
+                    await module.InvokeVoidAsync("updateLine", line);
                 }
             }
             catch

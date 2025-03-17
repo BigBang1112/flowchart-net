@@ -1,5 +1,7 @@
 declare const LeaderLine: any;
 
+const lineSize = 4;
+
 let currentLine: any;
 
 const main = document.getElementsByTagName('main')[0];
@@ -50,7 +52,7 @@ export function connect(start: HTMLElement, end: HTMLElement, startSocket: strin
     lines.push(line);*/
 }
 
-export function startLine(start: HTMLElement, startSocket: string): void {
+export function startLine(start: HTMLElement, startSocket: string, zoom: number): void {
     if (currentLine) {
         currentLine.remove();
     }
@@ -60,6 +62,7 @@ export function startLine(start: HTMLElement, startSocket: string): void {
         startSocket: startSocket,
         path: 'grid',
         hide: true,
+        size: lineSize * zoom,
         dash: { animation: true }
     });
 
@@ -93,4 +96,9 @@ export function removeCurrentLine(): void {
         currentLine.remove();
         currentLine = null;
     }
+}
+
+export function updateLine(line: any, zoom: number): void {
+    line.size = lineSize * zoom;
+    line.position();
 }
