@@ -30,4 +30,33 @@ public sealed class AppState
     {
         return Symbols.FirstOrDefault(s => s.Id == SelectedSymbolId);
     }
+
+    public IEnumerable<IOSymbolData> GetInputVariables(StartSymbolData startSymbol)
+    {
+        return RecurseConnectedIOSymbols(startSymbol, Symbols)
+            .Where(s => s.OutputFormat is null);
+    }
+
+    private static IEnumerable<IOSymbolData> RecurseConnectedIOSymbols(SymbolData symbol, List<SymbolData> symbols)
+    {        
+        foreach (var connectedSymbolId in symbol.GetConnectedSymbolIds())
+        {
+            var connectedSymbol = symbols.FirstOrDefault(s => s.Id == connectedSymbolId);
+
+            if (connectedSymbol is null)
+            {
+                continue;
+            }
+
+            if (connectedSymbol is IOSymbolData ioSymbol)
+            {
+                yield return ioSymbol;
+            }
+
+            foreach (var s in RecurseConnectedIOSymbols(connectedSymbol, symbols))
+            {
+                yield return s;
+            }
+        }
+    }
 }

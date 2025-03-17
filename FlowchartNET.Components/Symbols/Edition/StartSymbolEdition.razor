@@ -30,6 +30,12 @@
 
 <h3>Simulation</h3>
 <span>Inputs</span>
+<ul>
+    @foreach (var input in AppState.GetInputVariables(Data))
+    {
+        <li>@input.GetLabel()</li>
+    }
+</ul>
 <button class="button-fill">Simulate</button>
 
 <div class="property-group">
