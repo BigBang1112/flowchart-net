@@ -148,9 +148,7 @@
             { "OnMouseDown", EventCallback.Factory.Create<SymbolDragEventArgs>(this, OnSymbolMouseDownAsync) },
             { "OnPointClick", EventCallback.Factory.Create<PointClickEventArgs>(this, OnSymbolPointClickAsync) },
             { "OnKeyDown", EventCallback.Factory.Create<KeyboardEventArgs>(this, OnKeyDown) },
-            { "Selected", AppState.SelectedSymbolId == data.Id },
-            { "Simulated", AppState.Simulation?.CurrentSymbolIds.Contains(data.Id) == true },
-            };
+        };
 
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
     {

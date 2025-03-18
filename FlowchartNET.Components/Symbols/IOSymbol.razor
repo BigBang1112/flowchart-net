@@ -1,5 +1,6 @@
 ﻿@using FlowchartNET.Components.Events
 @implements IDraggable
+@inject AppState AppState
 
 <div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;" @onkeydown="OnKeyDown">
     <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "") @(Simulated ? "simulated" : "")"
@@ -22,7 +23,6 @@
 
 @code {
     private ElementReference shape;
-    private IJSObjectReference? nextSymbolLine;
 
     private static string socketTop = "top";
     private static string socketBottom = "bottom";
@@ -45,11 +45,8 @@
     [Parameter]
     public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-    [Parameter]
-    public bool Selected { get; set; }
-
-    [Parameter]
-    public bool Simulated { get; set; }
+    public bool Selected => AppState.SelectedSymbolId == Data.Id;
+    public bool Simulated => AppState.Simulation?.CurrentSymbolIds.Contains(Data.Id) ?? false;
 
     private async Task MouseDownAsync(MouseEventArgs e)
     {
