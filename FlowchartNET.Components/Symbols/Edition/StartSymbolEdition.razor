@@ -17,8 +17,8 @@
             {
                 <div>@input.GetLabel():</div>
                 <input type="text" size="1" value="@input.SimulationValue"
-                       @oninput="e => SetInputVariableValue(input, e.Value?.ToString())"
-                       @onchange="e => SetInputVariableValueAsync(input, e.Value?.ToString())" />
+                @oninput="e => SetInputVariableValue(input, e.Value?.ToString())"
+                @onchange="e => SetInputVariableValueAsync(input, e.Value?.ToString())" />
             }
         </div>
     }
@@ -27,7 +27,7 @@
         <small>No input variables. Please connect this symbol with at least one Input symbol.</small>
     }
 
-    <button class="button-fill">Simulate</button>
+    <button class="button-fill" @onclick="Simulate">Simulate</button>
 </div>
 
 <div class="property-group">
@@ -118,5 +118,10 @@
     {
         SetInputVariableValue(ioSymbol, value);
         await AppState.PersistAsync();
+    }
+
+    private void Simulate()
+    {
+        EventBroadcast.StartSimulation(Data);
     }
 }

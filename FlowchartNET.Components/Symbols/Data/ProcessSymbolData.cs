@@ -1,4 +1,5 @@
-﻿using FlowchartNET.Components.Symbols.Edition;
+﻿using FlowchartNET.Components.Simulation;
+using FlowchartNET.Components.Symbols.Edition;
 using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Symbols.Data;
@@ -37,5 +38,10 @@ public sealed class ProcessSymbolData : SymbolData
     public override void RemoveConnection(Guid symbolId)
     {
         NextSymbols.Remove(symbolId);
+    }
+
+    public override HashSet<Guid> Simulate(SimulationState simulation)
+    {
+        return NextSymbols; // temporary
     }
 }

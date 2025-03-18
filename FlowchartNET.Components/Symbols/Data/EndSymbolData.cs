@@ -1,4 +1,5 @@
-﻿using FlowchartNET.Components.Symbols.Edition;
+﻿using FlowchartNET.Components.Simulation;
+using FlowchartNET.Components.Symbols.Edition;
 using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Symbols.Data;
@@ -21,4 +22,9 @@ public sealed class EndSymbolData : SymbolData
     public override IEnumerable<Guid> GetConnectedSymbolIds() => [];
 
     public override void RemoveConnection(Guid symbolId) { }
+
+    public override HashSet<Guid> Simulate(SimulationState simulation)
+    {
+        return [];
+    }
 }

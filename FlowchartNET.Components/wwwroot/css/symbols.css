@@ -120,6 +120,10 @@
         pointer-events: none;
     }
 
+.shape.simulated {
+    border-color: #FF0;
+}
+
 .connect {
     position: absolute;
     border-radius: 1rem;

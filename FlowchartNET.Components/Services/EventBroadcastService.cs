@@ -8,6 +8,7 @@ internal sealed class EventBroadcastService
     public event Action? WorkspaceUpdate;
     public event Action? PropertiesUpdate;
     public event Func<SymbolData, Task>? SymbolDelete;
+    public event Action<StartSymbolData>? SimulationStart;
 
     public void UpdateMenu()
     {
@@ -30,5 +31,10 @@ internal sealed class EventBroadcastService
         {
             await SymbolDelete.Invoke(symbol);
         }
+    }
+
+    public void StartSimulation(StartSymbolData startSymbol)
+    {
+        SimulationStart?.Invoke(startSymbol);
     }
 }

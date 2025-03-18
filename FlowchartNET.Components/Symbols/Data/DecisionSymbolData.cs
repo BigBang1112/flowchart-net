@@ -1,4 +1,5 @@
-﻿using FlowchartNET.Components.Symbols.Edition;
+﻿using FlowchartNET.Components.Simulation;
+using FlowchartNET.Components.Symbols.Edition;
 using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Symbols.Data;
@@ -45,5 +46,10 @@ public sealed class DecisionSymbolData : SymbolData
     {
         TrueSymbols.Remove(symbolId);
         FalseSymbols.Remove(symbolId);
+    }
+
+    public override HashSet<Guid> Simulate(SimulationState simulation)
+    {
+        return TrueSymbols; // temporary
     }
 }

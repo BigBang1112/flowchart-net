@@ -2,7 +2,7 @@
 @implements IDraggable
 
 <div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;" @onkeydown="OnKeyDown">
-    <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "")"
+    <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "") @(Simulated ? "simulated" : "")"
     style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px; cursor: @(IsDragging ? "grabbing" : "grab");"
          @onmousedown="MouseDownAsync"
          @onmousedown:preventDefault="true"
@@ -47,6 +47,9 @@
 
     [Parameter]
     public bool Selected { get; set; }
+
+    [Parameter]
+    public bool Simulated { get; set; }
 
     private async Task MouseDownAsync(MouseEventArgs e)
     {

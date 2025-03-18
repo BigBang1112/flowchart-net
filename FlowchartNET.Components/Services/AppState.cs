@@ -16,7 +16,7 @@ public sealed class AppState
 
     public List<SymbolData> Symbols { get; set; } = [];
 
-    public SimulationState Simulation { get; set; } = new();
+    public SimulationState? Simulation { get; set; }
 
     public AppState(IServiceProvider serviceProvider)
     {

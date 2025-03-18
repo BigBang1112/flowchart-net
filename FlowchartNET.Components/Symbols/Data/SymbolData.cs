@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using FlowchartNET.Components.Simulation;
+using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Symbols.Data;
 
@@ -23,4 +24,5 @@ public abstract class SymbolData
     public abstract string GetLabel();
     public abstract IEnumerable<Guid> GetConnectedSymbolIds();
     public abstract void RemoveConnection(Guid symbolId);
+    public abstract HashSet<Guid> Simulate(SimulationState simulation);
 }

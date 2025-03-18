@@ -36,11 +36,15 @@
     private PointClickEventArgs? currentConnectorEvent;
     private Dictionary<(Guid FromSymbolId, Guid ToSymbolId), IJSObjectReference> lines = [];
 
+    private CancellationTokenSource simulationCts = new();
+    private Task? simulationTask;
+
     protected override Task OnInitializedAsync()
     {
         objRef = DotNetObjectReference.Create(this);
         EventBroadcast.WorkspaceUpdate += () => StateHasChanged();
         EventBroadcast.SymbolDelete += async (symbol) => await DeleteSymbolAsync(symbol);
+        EventBroadcast.SimulationStart += StartSimulation;
         return base.OnInitializedAsync();
     }
 
@@ -145,6 +149,7 @@
             { "OnPointClick", EventCallback.Factory.Create<PointClickEventArgs>(this, OnSymbolPointClickAsync) },
             { "OnKeyDown", EventCallback.Factory.Create<KeyboardEventArgs>(this, OnKeyDown) },
             { "Selected", AppState.SelectedSymbolId == data.Id },
+            { "Simulated", AppState.Simulation?.CurrentSymbolIds.Contains(data.Id) == true },
             };
 
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
@@ -360,6 +365,76 @@
                 // Dont update position in case of bad line update timing
             }
         }
+    }
+
+    private void StartSimulation(StartSymbolData startSymbol)
+    {
+        simulationCts.Cancel();
+        simulationCts.Dispose();
+        simulationCts = new CancellationTokenSource();
+
+        var simulation = new Simulation.SimulationState();
+        simulation.StartSymbolId = startSymbol.Id;
+        simulation.CurrentSymbolIds = [startSymbol.Id];
+        AppState.Simulation = simulation;
+
+        StateHasChanged();
+
+        simulationTask = Task.Run(async () =>
+        {
+            try
+            {
+                while (true)
+                {
+                    await Task.Delay(AppState.Simulation.IdleTime, simulationCts.Token);
+
+                    var nextSymbolIds = new Dictionary<Guid, HashSet<Guid>>();
+
+                    foreach (var currentSymbolId in AppState.Simulation.CurrentSymbolIds)
+                    {
+                        var currentSymbol = AppState.Symbols.FirstOrDefault(x => x.Id == currentSymbolId);
+
+                        if (currentSymbol is null)
+                        {
+                            throw new InvalidOperationException("Current symbol not found");
+                        }
+
+                        if (currentSymbol is EndSymbolData)
+                        {
+                            AppState.Simulation.IsFinished = true;
+                            break;
+                        }
+
+                        simulationCts.Token.ThrowIfCancellationRequested();
+
+                        nextSymbolIds.Add(currentSymbolId, currentSymbol.Simulate(AppState.Simulation));
+                    }
+
+                    AppState.Simulation.NextSymbolIds = nextSymbolIds;
+                    StateHasChanged();
+
+                    if (nextSymbolIds.Count == 0)
+                    {
+                        break;
+                    }
+
+                    await Task.Delay(AppState.Simulation.StepTime, simulationCts.Token);
+
+                    AppState.Simulation.CurrentSymbolIds = nextSymbolIds.Values.SelectMany(x => x).ToHashSet();
+                    StateHasChanged();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // ignore
+            }
+            finally
+            {
+                AppState.Simulation = null;
+                simulationCts.Dispose();
+                simulationCts = new CancellationTokenSource();
+            }
+        }, simulationCts.Token);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
