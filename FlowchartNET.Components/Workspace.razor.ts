@@ -87,6 +87,18 @@ export function endLine(end: HTMLElement, endSocket: string): any {
     return line;
 }
 
+export function createFullLine(start: HTMLElement, end: HTMLElement, startSocket: string, endSocket: string, zoom: number): any {
+    const line = new LeaderLine(start, end, {
+        color: '#e8eaed',
+        startSocket: startSocket,
+        endSocket: endSocket,
+        path: 'grid',
+        size: lineSize * zoom
+    });
+    return line;
+}
+
+
 export function removeCurrentLine(): void {
     if (currentLine) {
         currentLine.remove();

@@ -10,8 +10,8 @@
     @ontouchstart="TouchStartAsync"
     @ontouchstart:preventDefault="true"></div>
     <span>@Data.GetLabel()</span>
-    <span class="yes" style="right: -2rem;top: calc(50% - 1.5rem);">Yes</span>
-    <span class="no" style="bottom: -1.5rem;left: calc(50% - 2rem);">No</span>
+    <span class="yes @(SimulatedYes ? "simulated" : "")">Yes</span>
+    <span class="no @(SimulatedNo ? "simulated" : "")">No</span>
     <div class="connect connect-top connect-top-decision" 
     @onclick="() => OnPointClickAsync(socketTop, connectFrom: () => false, connectTo: () => true)"
     @onclick:stopPropagation="true"
@@ -20,10 +20,15 @@
     @onclick="() => OnPointClickAsync(socketBottom, connectFrom: () => true, connectTo: () => false, conn => Data.FalseSymbols.Add(conn.DestSymbolId))"
     @onclick:stopPropagation="true"
     @onmousedown:preventDefault="true"></div>
-    <div class="connect connect-left-decision"
-    @onclick="() => OnPointClickAsync(socketLeft, connectFrom: () => true, connectTo: () => false, conn => Data.TrueSymbols.Add(conn.DestSymbolId))"
-    @onclick:stopPropagation="true"
-    @onmousedown:preventDefault="true"></div>
+
+    @if (!noLeft)
+    {
+        <div class="connect connect-left-decision"
+        @onclick="() => OnPointClickAsync(socketLeft, connectFrom: () => true, connectTo: () => false, conn => Data.TrueSymbols.Add(conn.DestSymbolId))"
+        @onclick:stopPropagation="true"
+        @onmousedown:preventDefault="true"></div>
+    }
+
     <div class="connect connect-right-decision"
     @onclick="() => OnPointClickAsync(socketRight, connectFrom: () => true, connectTo: () => false, conn => Data.TrueSymbols.Add(conn.DestSymbolId))"
     @onclick:stopPropagation="true"
@@ -31,6 +36,8 @@
 </div>
 
 @code {
+    private static bool noLeft = false;
+
     private static string socketTop = "top";
     private static string socketBottom = "bottom";
     private static string socketLeft = "left";
@@ -46,6 +53,7 @@
     Guid ISymbol.Id => Data.Id;
     double ISymbol.X { get => Data.X; set => Data.X = value; }
     double ISymbol.Y { get => Data.Y; set => Data.Y = value; }
+    SymbolData ISymbol.Data => Data;
 
     [Parameter]
     public EventCallback<SymbolDragEventArgs> OnMouseDown { get; set; }
@@ -58,6 +66,11 @@
 
     public bool Selected => AppState.Persistent.SelectedSymbolId == Data.Id;
     public bool Simulated => AppState.Simulation?.CurrentSymbolIds.Contains(Data.Id) ?? false;
+    string? ISymbol.GetSocketIn() => socketTop;
+    string? ISymbol.GetSocketOut(Guid nextSymbolId) => Data.TrueSymbols.Contains(nextSymbolId) ? socketRight : socketBottom;
+
+    private bool SimulatedYes => AppState.Simulation?.NextSymbolIds.TryGetValue(Data.Id, out var nextSymbolIds) == true && nextSymbolIds.Intersect(Data.TrueSymbols).Any();
+    private bool SimulatedNo => AppState.Simulation?.NextSymbolIds.TryGetValue(Data.Id, out var nextSymbolIds) == true && nextSymbolIds.Intersect(Data.FalseSymbols).Any();
 
     private async Task MouseDownAsync(MouseEventArgs e)
     {

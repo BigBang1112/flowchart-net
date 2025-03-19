@@ -1,0 +1,13 @@
+.yes {
+    top: calc(50% - 1.5rem);
+    right: -2rem;
+}
+
+.no {
+    bottom: -1.5rem;
+    left: calc(50% - 2rem);
+}
+
+.yes.simulated, .no.simulated {
+    color: #FF0;
+}

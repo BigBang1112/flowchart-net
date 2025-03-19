@@ -64,7 +64,7 @@
             module = await ModuleHelper.ImportAsync(nameof(Workspace), nameof(WorkspaceModule));
             await module.InvokeVoidAsync("addHandlers", objRef);
 
-            DrawLinesFromState();
+            await ConnectSymbolsFromStateAsync();
         }
     }
 
@@ -443,7 +443,7 @@
                 .FirstOrDefault(x => x.Id == nextSymbolId)?.Shape).ToList();
                 */
 
-                foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
+        foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
                 {
                     var line = lines[(currentSymbolId, nextSymbolId)];
 
@@ -486,20 +486,29 @@
         }
     }
 
-    private void DrawLinesFromState()
+    private async ValueTask ConnectSymbolsFromStateAsync()
     {
-        foreach (var symbol in AppState.Persistent.Symbols)
+        foreach (var symbolComponent in symbolComponents.Select(x => x.Instance).OfType<ISymbol>())
         {
+            var symbol = symbolComponent.Data;
+
             foreach (var connectedSymbolId in symbol.GetConnectedSymbolIds())
             {
-                var connectedSymbol = AppState.Persistent.Symbols.FirstOrDefault(x => x.Id == connectedSymbolId);
+                var connectedSymbol = (ISymbol?)symbolComponents.FirstOrDefault(x => x.Instance is ISymbol s && s.Data.Id == connectedSymbolId)?.Instance;
 
-                if (connectedSymbol is null)
+                if (connectedSymbol is null || module is null)
                 {
                     continue;
                 }
 
-                // draw a line from symbol to connectedSymbol with appropriate sockets and add it to lines dictionary
+                var line = await module.InvokeAsync<IJSObjectReference>("createFullLine",
+                    symbolComponent.Shape,
+                    connectedSymbol.Shape,
+                    symbolComponent.GetSocketOut(connectedSymbolId),
+                    connectedSymbol.GetSocketIn(),
+                    AppState.Persistent.Zoom);
+
+                lines.Add((symbol.Id, connectedSymbolId), line);
             }
         }
     }
