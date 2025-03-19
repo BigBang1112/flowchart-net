@@ -1,4 +1,5 @@
 ﻿@inject AppState AppState
+@inject EventBroadcastService EventBroadcast
 
 <header>
     <Logo />
@@ -15,5 +16,8 @@
     protected override async Task OnInitializedAsync()
     {
         await AppState.LoadAsync();
+
+        EventBroadcast.UpdateWorkspace();
+        EventBroadcast.UpdateProperties();
     }
 }
