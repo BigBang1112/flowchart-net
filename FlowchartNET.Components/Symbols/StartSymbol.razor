@@ -39,7 +39,7 @@
     [Parameter]
     public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-    public bool Selected => AppState.SelectedSymbolId == Data.Id;
+    public bool Selected => AppState.Persistent.SelectedSymbolId == Data.Id;
     public bool Simulated => AppState.Simulation?.CurrentSymbolIds.Contains(Data.Id) ?? false;
 
     private async Task MouseDownAsync(MouseEventArgs e)

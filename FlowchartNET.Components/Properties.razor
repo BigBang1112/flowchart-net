@@ -1,9 +1,9 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<aside class="@(AppState.IsPropertiesOpen ? "open" : "")">
-    <div class="opener" @onclick="() => AppState.IsPropertiesOpen = !AppState.IsPropertiesOpen">
-        <img class="@(AppState.IsPropertiesOpen ? "open" : "")" src="_content/FlowchartNET.Components/img/icons/chevron_left.svg" width="48" height="48" />
+<aside class="@(AppState.Persistent.IsPropertiesOpen ? "open" : "")">
+    <div class="opener" @onclick="() => AppState.Persistent.IsPropertiesOpen = !AppState.Persistent.IsPropertiesOpen">
+        <img class="@(AppState.Persistent.IsPropertiesOpen ? "open" : "")" src="_content/FlowchartNET.Components/img/icons/chevron_left.svg" width="48" height="48" />
         <span>Symbol</span>
     </div>
     <div class="contents">

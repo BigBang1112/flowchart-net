@@ -1,14 +1,14 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<input type="range" min="0.1" max="2" step="0.05" value="@AppState.Zoom" @oninput="OnZoomChanged" @onchange="OnZoomChangeCompleted" />
+<input type="range" min="0.1" max="2" step="0.05" value="@AppState.Persistent.Zoom" @oninput="OnZoomChanged" @onchange="OnZoomChangeCompleted" />
 
 @code {
     private void OnZoomChanged(ChangeEventArgs e)
     {
         if (double.TryParse(e.Value?.ToString(), out var newZoom))
         {
-            AppState.Zoom = newZoom;
+            AppState.Persistent.Zoom = newZoom;
             EventBroadcast.UpdateWorkspace();
         }
     }

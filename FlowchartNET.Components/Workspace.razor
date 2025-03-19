@@ -5,7 +5,7 @@
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 
-<main style="zoom: @((AppState.Zoom * 100).ToString(System.Globalization.CultureInfo.InvariantCulture))%"
+<main style="zoom: @((AppState.Persistent.Zoom * 100).ToString(System.Globalization.CultureInfo.InvariantCulture))%"
 @ondragover="OnDragOver"
 @onclick="OnClickAsync"
 @ondragover:preventDefault="true" 
@@ -17,7 +17,7 @@
 @ontouchcancel="OnMouseUpAsync"
 @onscroll="OnScrollAsync">
 
-    @foreach (var symbol in AppState.Symbols)
+    @foreach (var symbol in AppState.Persistent.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" @ref="SymbolComponentRef" />
     }
@@ -62,6 +62,8 @@
         {
             module = await ModuleHelper.ImportAsync(nameof(Workspace), nameof(WorkspaceModule));
             await module.InvokeVoidAsync("addHandlers", objRef);
+
+            DrawLinesFromState();
         }
     }
 
@@ -77,12 +79,12 @@
             return;
         }
 
-        if (AppState.MenuSelectedSymbolId is not null)
+        if (AppState.Persistent.MenuSelectedSymbolId is not null)
         {
-            var mouseX = WorkspaceModule.GetMouseX(e.ClientX) * AppState.Zoom;
-            var mouseY = WorkspaceModule.GetMouseY(e.ClientY) * AppState.Zoom;
+            var mouseX = WorkspaceModule.GetMouseX(e.ClientX) * AppState.Persistent.Zoom;
+            var mouseY = WorkspaceModule.GetMouseY(e.ClientY) * AppState.Persistent.Zoom;
 
-            await AddSymbolAsync(AppState.MenuSelectedSymbolId, mouseX, mouseY);
+            await AddSymbolAsync(AppState.Persistent.MenuSelectedSymbolId, mouseX, mouseY);
         }
 
         if (currentConnectorEvent is not null)
@@ -95,8 +97,8 @@
     [JSInvokable]
     public async Task AddSymbolAsync(string symbolId, double x, double y)
     {
-        x /= AppState.Zoom;
-        y /= AppState.Zoom;
+        x /= AppState.Persistent.Zoom;
+        y /= AppState.Persistent.Zoom;
 
         var addedSymbols = new List<SymbolData>();
 
@@ -137,10 +139,10 @@
                 break;
         }
 
-        AppState.Symbols.AddRange(addedSymbols);
-        AppState.MenuSelectedSymbolId = null;
-        AppState.SelectedSymbolId = addedSymbols.FirstOrDefault()?.Id;
-        AppState.IsPropertiesOpen = true;
+        AppState.Persistent.Symbols.AddRange(addedSymbols);
+        AppState.Persistent.MenuSelectedSymbolId = null;
+        AppState.Persistent.SelectedSymbolId = addedSymbols.FirstOrDefault()?.Id;
+        AppState.Persistent.IsPropertiesOpen = true;
 
         EventBroadcast.UpdateMenu();
         EventBroadcast.UpdateProperties();
@@ -160,10 +162,10 @@
 
     private async Task OnSymbolMouseDownAsync(SymbolDragEventArgs e)
     {
-        currentlyDraggedSymbolOffsetX = (e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX) / AppState.Zoom) * AppState.Zoom;
-        currentlyDraggedSymbolOffsetY = (e.Draggable.Y - WorkspaceModule.GetMouseY(e.ClientY) / AppState.Zoom) * AppState.Zoom;
+        currentlyDraggedSymbolOffsetX = (e.Draggable.X - WorkspaceModule.GetMouseX(e.ClientX) / AppState.Persistent.Zoom) * AppState.Persistent.Zoom;
+        currentlyDraggedSymbolOffsetY = (e.Draggable.Y - WorkspaceModule.GetMouseY(e.ClientY) / AppState.Persistent.Zoom) * AppState.Persistent.Zoom;
         currentlyDraggedSymbol = e.Draggable;
-        AppState.SelectedSymbolId = e.Draggable.Id;
+        AppState.Persistent.SelectedSymbolId = e.Draggable.Id;
 
         EventBroadcast.UpdateProperties();
         await AppState.PersistAsync();
@@ -188,8 +190,8 @@
     {
         if (currentlyDraggedSymbol is not null)
         {
-            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(clientX) + currentlyDraggedSymbolOffsetX) / AppState.Zoom;
-            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(clientY) + currentlyDraggedSymbolOffsetY) / AppState.Zoom;
+            currentlyDraggedSymbol.X = Math.Max(0, WorkspaceModule.GetMouseX(clientX) + currentlyDraggedSymbolOffsetX) / AppState.Persistent.Zoom;
+            currentlyDraggedSymbol.Y = Math.Max(0, WorkspaceModule.GetMouseY(clientY) + currentlyDraggedSymbolOffsetY) / AppState.Persistent.Zoom;
 
             await UpdateLinePositionsAsync();
         }
@@ -197,8 +199,8 @@
 
     private async Task OnMouseDownAsync()
     {
-        AppState.SelectedSymbolId = null;
-        AppState.IsPropertiesOpen = false;
+        AppState.Persistent.SelectedSymbolId = null;
+        AppState.Persistent.IsPropertiesOpen = false;
         EventBroadcast.UpdateProperties();
         await AppState.PersistAsync();
     }
@@ -210,7 +212,7 @@
             currentlyDraggedSymbol.IsDragging = false;
             currentlyDraggedSymbol = null;
 
-            AppState.IsPropertiesOpen = true;
+            AppState.Persistent.IsPropertiesOpen = true;
             EventBroadcast.UpdateProperties();
 
             await UpdateLinePositionsAsync();
@@ -234,12 +236,12 @@
 
     private async Task DeleteSelectedSymbolAsync()
     {
-        await DeleteSymbolAsync(AppState.SelectedSymbolId);
+        await DeleteSymbolAsync(AppState.Persistent.SelectedSymbolId);
     }
 
     private async Task DeleteSymbolAsync(Guid? symbolId)
     {
-        var symbol = AppState.Symbols.FirstOrDefault(x => x.Id == symbolId);
+        var symbol = AppState.Persistent.Symbols.FirstOrDefault(x => x.Id == symbolId);
 
         if (symbol is null)
         {
@@ -259,7 +261,7 @@
             lines.Remove((symbol.Id, connectedSymbolId));
         }
 
-        var otherConnectedSymbols = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(symbol.Id));
+        var otherConnectedSymbols = AppState.Persistent.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(symbol.Id));
 
         foreach (var connectedSymbol in otherConnectedSymbols)
         {
@@ -269,12 +271,12 @@
             lines.Remove((connectedSymbol.Id, symbol.Id));
         }
 
-        AppState.Symbols.Remove(symbol);
+        AppState.Persistent.Symbols.Remove(symbol);
 
-        if (AppState.SelectedSymbolId == symbol.Id)
+        if (AppState.Persistent.SelectedSymbolId == symbol.Id)
         {
-            AppState.SelectedSymbolId = null;
-            AppState.IsPropertiesOpen = false;
+            AppState.Persistent.SelectedSymbolId = null;
+            AppState.Persistent.IsPropertiesOpen = false;
             EventBroadcast.UpdateProperties();
         }
 
@@ -294,12 +296,12 @@
             if (e.ConnectFrom.Invoke())
             {
                 currentConnectorEvent = e;
-                await module.InvokeVoidAsync("startLine", e.Element, e.Socket, AppState.Zoom);
+                await module.InvokeVoidAsync("startLine", e.Element, e.Socket, AppState.Persistent.Zoom);
             }
             else // delete otherwise
             {
                 // Gets all symbols that are connected to the clicked symbol
-                var allConnected = AppState.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
+                var allConnected = AppState.Persistent.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
 
                 if (allConnected.Count == 0)
                 {
@@ -397,7 +399,7 @@
 
                     foreach (var currentSymbolId in AppState.Simulation.CurrentSymbolIds)
                     {
-                        var currentSymbol = AppState.Symbols.FirstOrDefault(x => x.Id == currentSymbolId);
+                        var currentSymbol = AppState.Persistent.Symbols.FirstOrDefault(x => x.Id == currentSymbolId);
 
                         if (currentSymbol is null)
                         {
@@ -476,6 +478,24 @@
                 simulationCts = new CancellationTokenSource();
             }
         }, simulationCts.Token);
+    }
+
+    private void DrawLinesFromState()
+    {
+        foreach (var symbol in AppState.Persistent.Symbols)
+        {
+            foreach (var connectedSymbolId in symbol.GetConnectedSymbolIds())
+            {
+                var connectedSymbol = AppState.Persistent.Symbols.FirstOrDefault(x => x.Id == connectedSymbolId);
+
+                if (connectedSymbol is null)
+                {
+                    continue;
+                }
+
+                // draw a line from symbol to connectedSymbol with appropriate sockets and add it to lines dictionary
+            }
+        }
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

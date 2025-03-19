@@ -20,12 +20,12 @@
 @code {
     private async Task SelectItemAsync(string name)
     {
-        AppState.MenuSelectedSymbolId = name;
+        AppState.Persistent.MenuSelectedSymbolId = name;
 
         await AppState.PersistAsync();
     }
 
-    private bool IsSelected(string identifier) => AppState.MenuSelectedSymbolId == identifier;
+    private bool IsSelected(string identifier) => AppState.Persistent.MenuSelectedSymbolId == identifier;
 
     protected override Task OnInitializedAsync()
     {

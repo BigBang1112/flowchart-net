@@ -10,3 +10,10 @@
     <Properties />
     <Magnifier />
 </section>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await AppState.LoadAsync();
+    }
+}

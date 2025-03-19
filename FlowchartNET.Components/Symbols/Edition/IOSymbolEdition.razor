@@ -172,7 +172,7 @@
 
     private void SwitchToSymbol(Guid symbolId)
     {
-        AppState.SelectedSymbolId = symbolId;
+        AppState.Persistent.SelectedSymbolId = symbolId;
         EventBroadcast.UpdateProperties();
         EventBroadcast.UpdateWorkspace();
     }

@@ -9,12 +9,7 @@ public sealed class AppState
 {
     private readonly IServiceProvider serviceProvider;
 
-    public string? MenuSelectedSymbolId { get; set; }
-    public Guid? SelectedSymbolId { get; set; }
-    public bool IsPropertiesOpen { get; set; }
-    public double Zoom { get; set; } = 0.75;
-
-    public List<SymbolData> Symbols { get; set; } = [];
+    public PersistentState Persistent { get; set; } = new PersistentState();
 
     public SimulationState? Simulation { get; set; }
 
@@ -27,19 +22,26 @@ public sealed class AppState
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         var localStorage = scope.ServiceProvider.GetRequiredService<ILocalStorageService>();
-        await localStorage.SetItemAsync("state", this, cancellationToken);
+        await localStorage.SetItemAsync("persistent", Persistent, cancellationToken);
+    }
+
+    public async Task LoadAsync(CancellationToken cancellationToken = default)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var localStorage = scope.ServiceProvider.GetRequiredService<ILocalStorageService>();
+        Persistent = await localStorage.GetItemAsync<PersistentState>("persistent", cancellationToken) ?? new PersistentState();
     }
 
     public SymbolData? GetSelectedSymbol()
     {
-        return Symbols.FirstOrDefault(s => s.Id == SelectedSymbolId);
+        return Persistent.Symbols.FirstOrDefault(s => s.Id == Persistent.SelectedSymbolId);
     }
 
     public IEnumerable<IOSymbolData> GetInputVariables(StartSymbolData startSymbol)
     {
         var alreadyVisited = new HashSet<Guid>();
 
-        return RecurseConnectedIOSymbols(startSymbol, Symbols, alreadyVisited)
+        return RecurseConnectedIOSymbols(startSymbol, Persistent.Symbols, alreadyVisited)
             .Where(s => s.OutputFormat is null);
     }
 
