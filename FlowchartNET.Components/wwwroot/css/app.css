@@ -20,12 +20,12 @@ body {
 }
 
     body.light {
-        filter: invert(1) hue-rotate(180deg);
+        filter: invert(1) hue-rotate(90deg);
     }
 
 @media (prefers-color-scheme: light) {
     body:not(.light) {
-        filter: invert(1) hue-rotate(180deg);
+        filter: invert(1) hue-rotate(90deg);
     }
 }
 

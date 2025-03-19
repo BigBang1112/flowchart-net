@@ -1,4 +1,5 @@
 ﻿@using FlowchartNET.Components.Events
+@using FlowchartNET.Components.Simulation
 @implements IAsyncDisposable
 
 @inject ModuleHelper ModuleHelper
@@ -393,79 +394,7 @@
         {
             try
             {
-                while (true)
-                {
-                    var nextSymbolIds = new Dictionary<Guid, HashSet<Guid>>();
-
-                    foreach (var currentSymbolId in AppState.Simulation.CurrentSymbolIds)
-                    {
-                        var currentSymbol = AppState.Persistent.Symbols.FirstOrDefault(x => x.Id == currentSymbolId);
-
-                        if (currentSymbol is null)
-                        {
-                            throw new InvalidOperationException("Current symbol not found");
-                        }
-
-                        if (currentSymbol is EndSymbolData)
-                        {
-                            AppState.Simulation.IsFinished = true;
-                            break;
-                        }
-
-                        simulationCts.Token.ThrowIfCancellationRequested();
-
-                        var nextSymbolIdsOfCurrentSymbol = currentSymbol.Simulate(AppState.Simulation);
-
-                        /*var fromSymbolElement = symbolComponents.Select(x => x.Instance)
-                                .OfType<ISymbol>()
-                                .FirstOrDefault(x => x.Id == currentSymbolId)?.Shape;
-
-                            var toSymbolElements = nextSymbolIds[currentSymbolId].Select(nextSymbolId => symbolComponents.Select(x => x.Instance)
-                            .OfType<ISymbol>()
-                            .FirstOrDefault(x => x.Id == nextSymbolId)?.Shape).ToList();
-                        */
-
-                        foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
-                        {
-                            var line = lines[(currentSymbolId, nextSymbolId)];
-
-                            if (module is not null)
-                            {
-                                var simulationLine = await module.InvokeAsync<IJSObjectReference>("simulateLine", line, AppState.Simulation.StepTime.TotalMilliseconds);
-                                simulationLines.Add(simulationLine);
-                            }
-                        }
-
-                        nextSymbolIds.Add(currentSymbolId, nextSymbolIdsOfCurrentSymbol);
-                    }
-
-                    AppState.Simulation.NextSymbolIds = nextSymbolIds;
-                    await InvokeAsync(StateHasChanged);
-
-                    if (nextSymbolIds.Count == 0)
-                    {
-                        break;
-                    }
-
-                    await Task.Delay(AppState.Simulation.StepTime, simulationCts.Token);
-
-                    AppState.Simulation.CurrentSymbolIds = nextSymbolIds.Values.SelectMany(x => x).ToHashSet();
-
-                    foreach (var nextSymbolId in AppState.Simulation.CurrentSymbolIds)
-                    {
-                        AppState.Simulation.UsedSymbolIds.Add(nextSymbolId);
-                    }
-
-                    await InvokeAsync(StateHasChanged);
-                    await Task.Delay(AppState.Simulation.IdleTime, simulationCts.Token);
-
-                    foreach (var simulationLine in simulationLines)
-                    {
-                        await simulationLine.InvokeVoidAsync("remove");
-                    }
-
-                    simulationLines.Clear();
-                }
+                await SimulateAsync(simulation);
             }
             catch (OperationCanceledException)
             {
@@ -478,6 +407,83 @@
                 simulationCts = new CancellationTokenSource();
             }
         }, simulationCts.Token);
+    }
+
+    private async Task SimulateAsync(SimulationState simulation)
+    {
+        while (true)
+        {
+            var nextSymbolIds = new Dictionary<Guid, HashSet<Guid>>();
+
+            foreach (var currentSymbolId in simulation.CurrentSymbolIds)
+            {
+                var currentSymbol = AppState.Persistent.Symbols.FirstOrDefault(x => x.Id == currentSymbolId);
+
+                if (currentSymbol is null)
+                {
+                    throw new InvalidOperationException("Current symbol not found");
+                }
+
+                if (currentSymbol is EndSymbolData)
+                {
+                    simulation.IsFinished = true;
+                    break;
+                }
+
+                simulationCts.Token.ThrowIfCancellationRequested();
+
+                var nextSymbolIdsOfCurrentSymbol = currentSymbol.Simulate(simulation);
+
+                    /*var fromSymbolElement = symbolComponents.Select(x => x.Instance)
+                            .OfType<ISymbol>()
+                            .FirstOrDefault(x => x.Id == currentSymbolId)?.Shape;
+
+                var toSymbolElements = nextSymbolIds[currentSymbolId].Select(nextSymbolId => symbolComponents.Select(x => x.Instance)
+                .OfType<ISymbol>()
+                .FirstOrDefault(x => x.Id == nextSymbolId)?.Shape).ToList();
+                */
+
+                foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
+                {
+                    var line = lines[(currentSymbolId, nextSymbolId)];
+
+                    if (module is not null)
+                    {
+                        var simulationLine = await module.InvokeAsync<IJSObjectReference>("simulateLine", line, simulation.StepTime.TotalMilliseconds);
+                        simulationLines.Add(simulationLine);
+                    }
+                }
+
+                nextSymbolIds.Add(currentSymbolId, nextSymbolIdsOfCurrentSymbol);
+            }
+
+            simulation.NextSymbolIds = nextSymbolIds;
+            await InvokeAsync(StateHasChanged);
+
+            if (nextSymbolIds.Count == 0)
+            {
+                break;
+            }
+
+            await Task.Delay(simulation.StepTime, simulationCts.Token);
+
+            simulation.CurrentSymbolIds = nextSymbolIds.Values.SelectMany(x => x).ToHashSet();
+
+            foreach (var nextSymbolId in simulation.CurrentSymbolIds)
+            {
+                simulation.UsedSymbolIds.Add(nextSymbolId);
+            }
+
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(simulation.IdleTime, simulationCts.Token);
+
+            foreach (var simulationLine in simulationLines)
+            {
+                await simulationLine.InvokeVoidAsync("remove");
+            }
+
+            simulationLines.Clear();
+        }
     }
 
     private void DrawLinesFromState()
