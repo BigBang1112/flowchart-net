@@ -1,8 +1,11 @@
 @implements IAsyncDisposable
 @inject ModuleHelper ModuleHelper
+@inject AppState AppState
+@inject EventBroadcastService EventBroadcast
+@inject IJSRuntime JS
 
 <div class="toolbar">
-    <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="Add" />
+    <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="New" OnClick="PromptNewAsync" />
     <ToolbarItem ImageUrl="folder_open.svg" ImageAlt="Open" />
     <ToolbarItem ImageUrl="download.svg" ImageAlt="Save" />
     <ToolbarItem ImageUrl="print.svg" ImageAlt="Print" />
@@ -45,6 +48,24 @@
         {
             module = await ModuleHelper.ImportAsync(nameof(Toolbar));
         }
+    }
+
+    private async Task PromptNewAsync()
+    {
+        if (await JS.InvokeAsync<bool>("confirm", "Are you sure you want to create a new flowchart?"))
+        {
+            await NewAsync();
+        }
+    }
+
+    private async Task NewAsync()
+    {
+        AppState.Persistent = new PersistentState();
+
+        EventBroadcast.UpdateProperties();
+        EventBroadcast.UpdateWorkspace();
+
+        await AppState.PersistAsync();
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
