@@ -2,4 +2,4 @@
 
 namespace FlowchartNET.Components.Events;
 
-public sealed record SymbolDragEventArgs(IDraggable Draggable, double ClientX, double ClientY);
+public sealed record SymbolDragEventArgs(ISymbol Draggable, double ClientX, double ClientY);

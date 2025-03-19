@@ -19,7 +19,7 @@
 
     @foreach (var symbol in AppState.Symbols)
     {
-        <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" />
+        <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" @ref="SymbolComponentRef" />
     }
 
 </main>
@@ -29,15 +29,23 @@
 
     private DotNetObjectReference<Workspace>? objRef;
 
-    private IDraggable? currentlyDraggedSymbol;
+    private ISymbol? currentlyDraggedSymbol;
     private double currentlyDraggedSymbolOffsetX;
     private double currentlyDraggedSymbolOffsetY;
 
     private PointClickEventArgs? currentConnectorEvent;
     private Dictionary<(Guid FromSymbolId, Guid ToSymbolId), IJSObjectReference> lines = [];
+    private List<IJSObjectReference> simulationLines = [];
 
     private CancellationTokenSource simulationCts = new();
     private Task? simulationTask;
+
+    private List<DynamicComponent> symbolComponents = new();
+
+    DynamicComponent SymbolComponentRef
+    {
+        set => symbolComponents.Add(value);
+    }
 
     protected override Task OnInitializedAsync()
     {
@@ -349,7 +357,7 @@
             return;
         }
 
-        foreach (var line in lines.Values)
+        foreach (var line in lines.Values.Concat(simulationLines))
         {
             try
             {
@@ -374,6 +382,7 @@
         var simulation = new Simulation.SimulationState();
         simulation.StartSymbolId = startSymbol.Id;
         simulation.CurrentSymbolIds = [startSymbol.Id];
+        simulation.UsedSymbolIds = [startSymbol.Id];
         AppState.Simulation = simulation;
 
         StateHasChanged();
@@ -384,8 +393,6 @@
             {
                 while (true)
                 {
-                    await Task.Delay(AppState.Simulation.IdleTime, simulationCts.Token);
-
                     var nextSymbolIds = new Dictionary<Guid, HashSet<Guid>>();
 
                     foreach (var currentSymbolId in AppState.Simulation.CurrentSymbolIds)
@@ -405,11 +412,33 @@
 
                         simulationCts.Token.ThrowIfCancellationRequested();
 
-                        nextSymbolIds.Add(currentSymbolId, currentSymbol.Simulate(AppState.Simulation));
+                        var nextSymbolIdsOfCurrentSymbol = currentSymbol.Simulate(AppState.Simulation);
+
+                        /*var fromSymbolElement = symbolComponents.Select(x => x.Instance)
+                                .OfType<ISymbol>()
+                                .FirstOrDefault(x => x.Id == currentSymbolId)?.Shape;
+
+                            var toSymbolElements = nextSymbolIds[currentSymbolId].Select(nextSymbolId => symbolComponents.Select(x => x.Instance)
+                            .OfType<ISymbol>()
+                            .FirstOrDefault(x => x.Id == nextSymbolId)?.Shape).ToList();
+                        */
+
+                        foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
+                        {
+                            var line = lines[(currentSymbolId, nextSymbolId)];
+
+                            if (module is not null)
+                            {
+                                var simulationLine = await module.InvokeAsync<IJSObjectReference>("simulateLine", line, AppState.Simulation.StepTime.TotalMilliseconds);
+                                simulationLines.Add(simulationLine);
+                            }
+                        }
+
+                        nextSymbolIds.Add(currentSymbolId, nextSymbolIdsOfCurrentSymbol);
                     }
 
                     AppState.Simulation.NextSymbolIds = nextSymbolIds;
-                    StateHasChanged();
+                    await InvokeAsync(StateHasChanged);
 
                     if (nextSymbolIds.Count == 0)
                     {
@@ -419,7 +448,21 @@
                     await Task.Delay(AppState.Simulation.StepTime, simulationCts.Token);
 
                     AppState.Simulation.CurrentSymbolIds = nextSymbolIds.Values.SelectMany(x => x).ToHashSet();
-                    StateHasChanged();
+
+                    foreach (var nextSymbolId in AppState.Simulation.CurrentSymbolIds)
+                    {
+                        AppState.Simulation.UsedSymbolIds.Add(nextSymbolId);
+                    }
+
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(AppState.Simulation.IdleTime, simulationCts.Token);
+
+                    foreach (var simulationLine in simulationLines)
+                    {
+                        await simulationLine.InvokeVoidAsync("remove");
+                    }
+
+                    simulationLines.Clear();
                 }
             }
             catch (OperationCanceledException)

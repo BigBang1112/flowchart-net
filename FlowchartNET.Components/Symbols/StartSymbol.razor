@@ -1,11 +1,9 @@
 ﻿@using FlowchartNET.Components.Events
-@implements IDraggable
-@inject AppState AppState
-
+@implements ISymbol
 @inject AppState AppState
 
 <div class="symbol symbol-terminal" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;" @onkeydown="OnKeyDown">
-    <div @ref="shape" class="shape symbol-hoverable @(Selected ? "selected" : "") @(Simulated ? "simulated" : "")" style="cursor: @(IsDragging ? "grabbing" : "grab");"
+    <div @ref="Shape" class="shape symbol-hoverable @(Selected ? "selected" : "") @(Simulated ? "simulated" : "")" style="cursor: @(IsDragging ? "grabbing" : "grab");"
     @onmousedown="MouseDownAsync"
     @onmousedown:preventDefault="true"
     @onmousedown:stopPropagation="true"
@@ -19,18 +17,18 @@
 </div>
 
 @code {
-    private ElementReference shape;
-
     private static string socket = "bottom";
+
+    public ElementReference Shape { get; private set; }
 
     public bool IsDragging { get; set; }
 
     [Parameter, EditorRequired]
     public required StartSymbolData Data { get; set; }
 
-    Guid IDraggable.Id => Data.Id;
-    double IDraggable.X { get => Data.X; set => Data.X = value; }
-    double IDraggable.Y { get => Data.Y; set => Data.Y = value; }
+    Guid ISymbol.Id => Data.Id;
+    double ISymbol.X { get => Data.X; set => Data.X = value; }
+    double ISymbol.Y { get => Data.Y; set => Data.Y = value; }
 
     [Parameter]
     public EventCallback<SymbolDragEventArgs> OnMouseDown { get; set; }
@@ -63,24 +61,6 @@
 
     private async Task OnPointClickAsync(string socket, Func<bool> connectFrom, Func<bool> connectTo, Action<LineConnection> connection)
     {
-        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, shape, socket, connectFrom, connectTo, connection));
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (AppState.Simulation is null)
-        {
-            return;
-        }
-
-        if (!AppState.Simulation.CurrentSymbolIds.Contains(Data.Id))
-        {
-            return;
-        }
-
-        if (!AppState.Simulation.NextSymbolIds.TryGetValue(Data.Id, out var nextSymbolId))
-        {
-            return;
-        }
+        await OnPointClick.InvokeAsync(new PointClickEventArgs(this, Shape, socket, connectFrom, connectTo, connection));
     }
 }

@@ -87,10 +87,6 @@ export function endLine(end: HTMLElement, endSocket: string): any {
     return line;
 }
 
-export function removeLine(line: any): void {
-    line.remove();
-}
-
 export function removeCurrentLine(): void {
     if (currentLine) {
         currentLine.remove();
@@ -101,4 +97,17 @@ export function removeCurrentLine(): void {
 export function updateLine(line: any, zoom: number): void {
     line.size = lineSize * zoom;
     line.position();
+}
+
+export function simulateLine(line: any, stepTime: number): any {
+    const simulationLine = new LeaderLine(line.start, line.end, {
+        color: '#ffff00',
+        size: line.size,
+        path: line.path,
+        hide: true,
+        startSocket: line.startSocket,
+        endSocket: line.endSocket
+    });
+    simulationLine.show('draw', { duration: stepTime, timing: 'ease' });
+    return simulationLine;
 }

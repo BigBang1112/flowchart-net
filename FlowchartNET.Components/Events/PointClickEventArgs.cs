@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 namespace FlowchartNET.Components.Events;
 
 public sealed record PointClickEventArgs(
-    IDraggable Symbol, 
+    ISymbol Symbol, 
     ElementReference Element, 
     string Socket, 
     Func<bool> ConnectFrom, 
