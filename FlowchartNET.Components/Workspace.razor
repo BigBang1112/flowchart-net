@@ -83,8 +83,8 @@
 
         if (AppState.Persistent.MenuSelectedSymbolId is not null)
         {
-            var mouseX = WorkspaceModule.GetMouseX(e.ClientX) * AppState.Persistent.Zoom;
-            var mouseY = WorkspaceModule.GetMouseY(e.ClientY) * AppState.Persistent.Zoom;
+            var mouseX = WorkspaceModule.GetMouseX(e.ClientX);
+            var mouseY = WorkspaceModule.GetMouseY(e.ClientY);
 
             await AddSymbolAsync(AppState.Persistent.MenuSelectedSymbolId, mouseX, mouseY);
         }
