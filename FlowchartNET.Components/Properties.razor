@@ -13,6 +13,9 @@
                 <div class="shape preview"></div>
                 <span>@Symbol.GetLabel()</span>
             </div>
+            <div class="symbol-id">
+                @Symbol.Id
+            </div>
             <DynamicComponent Type="Symbol.EditionComponentType" Parameters="GetSymbolEditionComponentParameters(Symbol)"></DynamicComponent>
         }
     </div>

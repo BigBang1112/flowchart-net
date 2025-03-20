@@ -7,7 +7,7 @@
 <div class="toolbar">
     <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="New" OnClick="ConfirmNewAsync" />
     <ToolbarItem ImageUrl="folder_open.svg" ImageAlt="Open">
-        <InputFile class="file" accept=".flowchart" OnChange="LoadFlowchartFile" @ref="inputFileLoad" title=" " />
+        <InputFile class="file" accept=".flowchart" title=" " OnChange="LoadFlowchartFile" @ref="inputFileLoad" />
     </ToolbarItem>
     <ToolbarItem ImageUrl="download.svg" ImageAlt="Save" OnClick="PromptSaveAsync" />
     <ToolbarItem ImageUrl="print.svg" ImageAlt="Print" />
