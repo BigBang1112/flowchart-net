@@ -2,12 +2,20 @@
 using FlowchartNET.Components.Simulation;
 using FlowchartNET.Components.Symbols.Data;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FlowchartNET.Components.Services;
 
 public sealed class AppState
 {
     private readonly IServiceProvider serviceProvider;
+
+    private static readonly JsonSerializerOptions jsonSerializerOptions = new()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
 
     public PersistentState Persistent { get; set; } = new PersistentState();
 
@@ -30,6 +38,16 @@ public sealed class AppState
         await using var scope = serviceProvider.CreateAsyncScope();
         var localStorage = scope.ServiceProvider.GetRequiredService<ILocalStorageService>();
         Persistent = await localStorage.GetItemAsync<PersistentState>("persistent", cancellationToken) ?? new PersistentState();
+    }
+
+    public async Task SaveAsync(Stream stream, CancellationToken cancellationToken = default)
+    {
+        await JsonSerializer.SerializeAsync(stream, Persistent, jsonSerializerOptions, cancellationToken);
+    }
+
+    public async Task LoadAsync(Stream stream, CancellationToken cancellationToken = default)
+    {
+        Persistent = await JsonSerializer.DeserializeAsync<PersistentState>(stream, jsonSerializerOptions, cancellationToken) ?? new PersistentState();
     }
 
     public SymbolData? GetSelectedSymbol()

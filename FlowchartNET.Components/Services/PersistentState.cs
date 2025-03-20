@@ -4,6 +4,7 @@ namespace FlowchartNET.Components.Services;
 
 public sealed class PersistentState
 {
+    public int Version { get; set; }
     public string? MenuSelectedSymbolId { get; set; }
     public Guid? SelectedSymbolId { get; set; }
     public bool IsPropertiesOpen { get; set; }

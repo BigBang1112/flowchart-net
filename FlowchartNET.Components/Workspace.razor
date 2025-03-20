@@ -20,7 +20,7 @@
 
     @foreach (var symbol in AppState.Persistent.Symbols)
     {
-        <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" @ref="SymbolComponentRef" />
+        <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" @ref="symbolComponents[symbol.Id]" />
     }
 
 </main>
@@ -36,17 +36,12 @@
 
     private PointClickEventArgs? currentConnectorEvent;
     private Dictionary<(Guid FromSymbolId, Guid ToSymbolId), IJSObjectReference> lines = [];
-    private List<IJSObjectReference> simulationLines = [];
 
+    private List<IJSObjectReference> simulationLines = [];
     private CancellationTokenSource simulationCts = new();
     private Task? simulationTask;
 
-    private List<DynamicComponent> symbolComponents = new();
-
-    DynamicComponent SymbolComponentRef
-    {
-        set => symbolComponents.Add(value);
-    }
+    private Dictionary<Guid, DynamicComponent> symbolComponents = new();
 
     protected override Task OnInitializedAsync()
     {
@@ -54,6 +49,12 @@
         EventBroadcast.WorkspaceUpdate += () => StateHasChanged();
         EventBroadcast.SymbolDelete += async (symbol) => await DeleteSymbolAsync(symbol);
         EventBroadcast.SimulationStart += StartSimulation;
+        EventBroadcast.FlowchartNew += async () => await ClearLinesAsync();
+        EventBroadcast.FlowchartLoad += async () =>
+        {
+            await ClearLinesAsync();
+            await ConnectSymbolsFromStateAsync();
+        };
         return base.OnInitializedAsync();
     }
 
@@ -434,16 +435,7 @@
 
                 var nextSymbolIdsOfCurrentSymbol = currentSymbol.Simulate(simulation);
 
-                    /*var fromSymbolElement = symbolComponents.Select(x => x.Instance)
-                            .OfType<ISymbol>()
-                            .FirstOrDefault(x => x.Id == currentSymbolId)?.Shape;
-
-                var toSymbolElements = nextSymbolIds[currentSymbolId].Select(nextSymbolId => symbolComponents.Select(x => x.Instance)
-                .OfType<ISymbol>()
-                .FirstOrDefault(x => x.Id == nextSymbolId)?.Shape).ToList();
-                */
-
-        foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
+                foreach (var nextSymbolId in nextSymbolIdsOfCurrentSymbol)
                 {
                     var line = lines[(currentSymbolId, nextSymbolId)];
 
@@ -488,13 +480,18 @@
 
     private async ValueTask ConnectSymbolsFromStateAsync()
     {
-        foreach (var symbolComponent in symbolComponents.Select(x => x.Instance).OfType<ISymbol>())
+        foreach (var symbol in AppState.Persistent.Symbols)
         {
-            var symbol = symbolComponent.Data;
+            var symbolComponent = (ISymbol?)symbolComponents.GetValueOrDefault(symbol.Id)?.Instance;
+
+            if (symbolComponent is null)
+            {
+                continue;
+            }
 
             foreach (var connectedSymbolId in symbol.GetConnectedSymbolIds())
             {
-                var connectedSymbol = (ISymbol?)symbolComponents.FirstOrDefault(x => x.Instance is ISymbol s && s.Data.Id == connectedSymbolId)?.Instance;
+                var connectedSymbol = (ISymbol?)symbolComponents.GetValueOrDefault(connectedSymbolId)?.Instance;
 
                 if (connectedSymbol is null || module is null)
                 {
@@ -511,6 +508,16 @@
                 lines.Add((symbol.Id, connectedSymbolId), line);
             }
         }
+    }
+
+    private async Task ClearLinesAsync()
+    {
+        foreach (var line in lines.Values)
+        {
+            await line.InvokeVoidAsync("remove");
+        }
+
+        lines.Clear();
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

@@ -9,6 +9,8 @@ internal sealed class EventBroadcastService
     public event Action? PropertiesUpdate;
     public event Func<SymbolData, Task>? SymbolDelete;
     public event Action<StartSymbolData>? SimulationStart;
+    public event Func<Task>? FlowchartNew;
+    public event Func<Task>? FlowchartLoad;
 
     public void UpdateMenu()
     {
@@ -36,5 +38,21 @@ internal sealed class EventBroadcastService
     public void StartSimulation(StartSymbolData startSymbol)
     {
         SimulationStart?.Invoke(startSymbol);
+    }
+
+    public async Task NewFlowchartAsync()
+    {
+        if (FlowchartNew is not null)
+        {
+            await FlowchartNew.Invoke();
+        }
+    }
+
+    public async Task LoadFlowchartAsync()
+    {
+        if (FlowchartLoad is not null)
+        {
+            await FlowchartLoad.Invoke();
+        }
     }
 }

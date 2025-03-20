@@ -6,3 +6,7 @@
         document.body.classList.remove("light");
     }
 }
+
+export function resetInputFile(input: HTMLInputElement): void {
+    input.value = '';
+}

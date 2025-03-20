@@ -5,9 +5,11 @@
 @inject IJSRuntime JS
 
 <div class="toolbar">
-    <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="New" OnClick="PromptNewAsync" />
-    <ToolbarItem ImageUrl="folder_open.svg" ImageAlt="Open" />
-    <ToolbarItem ImageUrl="download.svg" ImageAlt="Save" />
+    <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="New" OnClick="ConfirmNewAsync" />
+    <ToolbarItem ImageUrl="folder_open.svg" ImageAlt="Open">
+        <InputFile class="file" accept=".flowchart" OnChange="LoadFlowchartFile" @ref="inputFileLoad" title=" " />
+    </ToolbarItem>
+    <ToolbarItem ImageUrl="download.svg" ImageAlt="Save" OnClick="PromptSaveAsync" />
     <ToolbarItem ImageUrl="print.svg" ImageAlt="Print" />
     <ToolbarDivider />
     <ToolbarItem ImageUrl="file_export.svg" ImageAlt="Export">
@@ -27,6 +29,7 @@
 
 @code {
     private IJSObjectReference? module;
+    private InputFile? inputFileLoad;
 
     private bool toggleTheme;
 
@@ -50,7 +53,7 @@
         }
     }
 
-    private async Task PromptNewAsync()
+    private async Task ConfirmNewAsync()
     {
         if (await JS.InvokeAsync<bool>("confirm", "Are you sure you want to create a new flowchart?"))
         {
@@ -64,6 +67,59 @@
 
         EventBroadcast.UpdateProperties();
         EventBroadcast.UpdateWorkspace();
+
+        await EventBroadcast.NewFlowchartAsync();
+
+        await AppState.PersistAsync();
+    }
+
+    private async Task PromptSaveAsync()
+    {
+        var fileName = await JS.InvokeAsync<string>("prompt", "Enter the file name to save the flowchart as:", "Untitled.flowchart");
+
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return;
+        }
+
+        if (!fileName.EndsWith(".flowchart", StringComparison.OrdinalIgnoreCase))
+        {
+            fileName += ".flowchart";
+        }
+
+        await using var ms = new MemoryStream();
+        await AppState.SaveAsync(ms);
+
+        ms.Position = 0;
+
+        using var streamRef = new DotNetStreamReference(ms);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+
+    private async Task LoadFlowchartFile(InputFileChangeEventArgs e)
+    {
+        var file = e.GetMultipleFiles().FirstOrDefault();
+
+        if (file is null)
+        {
+            return;
+        }
+
+        await using (var stream = file.OpenReadStream(maxAllowedSize: int.MaxValue))
+        {
+            await AppState.LoadAsync(stream);
+        }
+
+        if (module is not null && inputFileLoad?.Element is not null)
+        {
+            await module.InvokeVoidAsync("resetInputFile", inputFileLoad.Element);
+        }
+
+        EventBroadcast.UpdateProperties();
+        EventBroadcast.UpdateWorkspace();
+
+        await EventBroadcast.LoadFlowchartAsync();
 
         await AppState.PersistAsync();
     }
