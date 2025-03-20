@@ -406,6 +406,7 @@
                 AppState.Simulation = null;
                 simulationCts.Dispose();
                 simulationCts = new CancellationTokenSource();
+                await InvokeAsync(StateHasChanged);
             }
         }, simulationCts.Token);
     }
