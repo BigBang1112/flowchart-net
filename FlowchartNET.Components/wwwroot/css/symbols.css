@@ -103,7 +103,7 @@
 }
 
     .symbol-decision .shape {
-        border: 2.8px solid var(--white);
+        border: 3px solid var(--white);
         box-sizing: border-box;
         border-radius: 1px;
     }
@@ -111,7 +111,7 @@
         .symbol-decision .shape.preview {
             width: calc(80px * sin(45deg) + 2px);
             height: calc(80px * sin(45deg) + 2px);
-            transform: scaleX(2.5) rotate(45deg);
+            transform: scaleX(2.8) rotate(45deg);
         }
 
     .symbol-decision span {

@@ -81,7 +81,7 @@
         get => Data.Condition;
         set
         {
-            Data.Condition = value == string.Empty ? null : value;
+            Data.Condition = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
@@ -92,7 +92,7 @@
         get => Data.DisplayName;
         set
         {
-            Data.DisplayName = value == string.Empty ? null : value;
+            Data.DisplayName = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }

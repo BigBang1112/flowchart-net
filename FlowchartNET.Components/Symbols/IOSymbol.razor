@@ -5,12 +5,21 @@
 <div class="symbol symbol-io" style="position: absolute; left: @(Data.X)px; top: @(Data.Y)px; width: @(Data.Width)px;" @onkeydown="OnKeyDown">
     <div @ref="Shape" class="shape symbol-hoverable @(Selected ? "selected" : "") @(Simulated ? "simulated" : "")"
     style="width: calc(100% - (@(IOSymbolData.DefaultHeight)px * tan(20deg))); height: @(IOSymbolData.DefaultHeight)px; cursor: @(IsDragging ? "grabbing" : "grab");"
-         @onmousedown="MouseDownAsync"
-         @onmousedown:preventDefault="true"
-         @onmousedown:stopPropagation="true"
-         @ontouchstart="TouchStartAsync"
-         @ontouchstart:preventDefault="true"></div>
-    <span>@Data.GetLabel()</span>
+        @onmousedown="MouseDownAsync"
+        @onmousedown:preventDefault="true"
+        @onmousedown:stopPropagation="true"
+        @ontouchstart="TouchStartAsync"
+        @ontouchstart:preventDefault="true"></div>
+
+    @if (Simulated)
+    {
+        <span>@Data.GetLabel() = @Data.SimulationValue</span>
+    }
+    else
+    {
+        <span>@Data.GetLabel()</span>
+    }
+
     <div class="connect connect-top connect-top-io"
          @onclick="() => OnPointClickAsync(socketTop, connectFrom: () => false, connectTo: () => true)"
          @onclick:stopPropagation="true"

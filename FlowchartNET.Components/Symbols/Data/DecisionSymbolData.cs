@@ -1,12 +1,16 @@
 ﻿using FlowchartNET.Components.Simulation;
 using FlowchartNET.Components.Symbols.Edition;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace FlowchartNET.Components.Symbols.Data;
 
-public sealed class DecisionSymbolData : SymbolData
+public sealed partial class DecisionSymbolData : SymbolData
 {
-    public static double DefaultHeight { get; } = 80;
+    [GeneratedRegex(@"^([a-zA-Z_]+)\s*(!=|<=|<|>=|>|==|=)\s*([a-zA-Z_]+)")]
+    private static partial Regex ConditionRegex();
+
+    public static double DefaultHeight { get; } = 100;
     public static double DefaultScaleX { get; } = 2.5;
 
     [JsonIgnore]
@@ -50,6 +54,23 @@ public sealed class DecisionSymbolData : SymbolData
 
     public override HashSet<Guid> Simulate(SimulationState simulation)
     {
-        return TrueSymbols; // temporary
+        if (string.IsNullOrEmpty(Condition))
+        {
+            throw new Exception("Condition is required for Decision.");
+        }
+
+        var matchCondition = ConditionRegex().Match(Condition);
+
+        if (!matchCondition.Success)
+        {
+            throw new Exception("Invalid condition format.");
+        }
+
+        var expression = new NCalc.Expression(Condition)
+        {
+            Parameters = simulation.Variables
+        };
+
+        return expression.Evaluate() is true ? TrueSymbols : FalseSymbols;
     }
 }

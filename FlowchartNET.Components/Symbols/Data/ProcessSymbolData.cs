@@ -1,11 +1,15 @@
 ﻿using FlowchartNET.Components.Simulation;
 using FlowchartNET.Components.Symbols.Edition;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace FlowchartNET.Components.Symbols.Data;
 
-public sealed class ProcessSymbolData : SymbolData
+public sealed partial class ProcessSymbolData : SymbolData
 {
+    [GeneratedRegex(@"^(([a-zA-Z_]+)\((.*)\))")]
+    private static partial Regex FunctionCallRegex();
+
     public static double DefaultWidth { get; } = 240;
     public static double DefaultHeight { get; } = 80;
 
@@ -42,6 +46,36 @@ public sealed class ProcessSymbolData : SymbolData
 
     public override HashSet<Guid> Simulate(SimulationState simulation)
     {
-        return NextSymbols; // temporary
+        if (string.IsNullOrEmpty(Process))
+        {
+            return NextSymbols;
+        }
+
+        var matchProcess = FunctionCallRegex().Match(Process);
+
+        if (matchProcess.Success)
+        {
+            simulation.CalledFunctions.Add(matchProcess.Groups[1].Value);
+
+            if (VariableName is not null)
+            {
+                simulation.Variables[VariableName] = null;
+            }
+            
+            return NextSymbols;
+        }
+
+        if (VariableName is not null)
+        {
+            // in case the process has math instead of a function call:
+            var expression = new NCalc.Expression(Process)
+            {
+                Parameters = simulation.Variables
+            };
+
+            simulation.Variables[VariableName] = expression.Evaluate();
+        }
+
+        return NextSymbols;
     }
 }

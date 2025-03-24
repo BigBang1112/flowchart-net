@@ -42,6 +42,26 @@ public sealed class IOSymbolData : SymbolData
 
     public override HashSet<Guid> Simulate(SimulationState simulation)
     {
-        return NextSymbols; // temporary
+        if (OutputFormat is null)
+        {
+            var variableName = VariableName ?? "Input";
+
+            if (double.TryParse(SimulationValue, out var value))
+            {
+                simulation.Variables[variableName] = value;
+            }
+            else
+            {
+                simulation.Variables[variableName] = SimulationValue;
+            }
+        }
+        else
+        {
+            var variableName = VariableName ?? "Output";
+
+            SimulationValue = simulation.Variables[variableName]?.ToString();
+        }
+
+        return NextSymbols;
     }
 }

@@ -40,7 +40,7 @@
         get => Data.DisplayName;
         set
         {
-            Data.DisplayName = value == string.Empty ? null : value;
+            Data.DisplayName = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }

@@ -74,7 +74,7 @@
         get => Data.Process;
         set
         {
-            Data.Process = value == string.Empty ? null : value;
+            Data.Process = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
@@ -85,7 +85,7 @@
         get => Data.VariableName;
         set
         {
-            Data.VariableName = value == string.Empty ? null : value;
+            Data.VariableName = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
@@ -96,7 +96,7 @@
         get => Data.DisplayName;
         set
         {
-            Data.DisplayName = value == string.Empty ? null : value;
+            Data.DisplayName = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }

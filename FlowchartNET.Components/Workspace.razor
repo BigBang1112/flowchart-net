@@ -18,6 +18,11 @@
 @ontouchcancel="OnMouseUpAsync"
 @onscroll="OnScrollAsync">
 
+    @if (simulationTask?.Exception is not null)
+    {
+        <p>@simulationTask.Exception</p>
+    }
+
     @foreach (var symbol in AppState.Persistent.Symbols)
     {
         <DynamicComponent Type="symbol.ComponentType" Parameters="GetSymbolComponentParameters(symbol)" @ref="symbolComponents[symbol.Id]" />

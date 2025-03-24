@@ -89,7 +89,7 @@
         get => Data.VariableName;
         set
         {
-            Data.VariableName = value == string.Empty ? null : value;
+            Data.VariableName = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
@@ -100,7 +100,7 @@
         get => Data.DisplayName;
         set
         {
-            Data.DisplayName = value == string.Empty ? null : value;
+            Data.DisplayName = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
             EventBroadcast.UpdateWorkspace();
         }
@@ -108,7 +108,7 @@
 
     private string? OutputFormat
     {
-        get => Data.OutputFormat == string.Empty ? "{0}" : Data.OutputFormat;
+        get => Data.OutputFormat == string.Empty ? "{0}" : Data.OutputFormat?.Trim();
         set
         {
             Data.OutputFormat = value;
@@ -141,7 +141,7 @@
         get => Data.SimulationValue;
         set
         {
-            Data.SimulationValue = value == string.Empty ? null : value;
+            Data.SimulationValue = value == string.Empty ? null : value?.Trim();
             EventBroadcast.UpdateProperties();
         }
     }
