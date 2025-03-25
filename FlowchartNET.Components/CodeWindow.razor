@@ -1,0 +1,67 @@
+@inject AppState AppState
+@inject EventBroadcastService EventBroadcast
+@inject IJSRuntime JS
+
+@if (AppState.IsCodeGenerationOpen)
+{
+    <div class="container">
+        <div class="window">
+            <div class="languages">
+                @foreach (var lang in Enum.GetValues<Language>())
+                {
+                    <button class="button-noborder lang @(AppState.Persistent.Language == lang ? "active" : "")" @onclick="async () => await SetLanguageAsync(lang)">
+                        @GetUserFriendlyLanguageName(lang)
+                    </button>
+                }
+                <button class="button-fill close" @onclick="Close">Close</button>
+            </div>
+            <div class="code">
+                <StandaloneCodeEditor @ref="editor" ConstructionOptions="EditorConstructionOptions" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private StandaloneCodeEditor? editor;
+
+    protected override void OnInitialized()
+    {
+        EventBroadcast.CodeWindowUpdate += StateHasChanged;
+    }
+
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            Theme = "vs-dark",
+            ReadOnly = true,
+            AutomaticLayout = true,
+            FontSize = 20,
+            Language = AppState.Persistent.Language.ToString().ToLowerInvariant(),
+        };
+    }
+
+    private string GetUserFriendlyLanguageName(Language lang) => lang switch
+    {
+        Language.CSharp => "C#",
+        _ => lang.ToString(),
+    };
+
+    private async ValueTask SetLanguageAsync(Language lang)
+    {
+        AppState.Persistent.Language = lang;
+
+        if (editor is null)
+        {
+            return;
+        }
+
+        await BlazorMonaco.Editor.Global.SetModelLanguage(JS, await editor.GetModel(), lang.ToString().ToLowerInvariant());
+    }
+
+    private void Close()
+    {
+        AppState.IsCodeGenerationOpen = false;
+    }
+}

@@ -16,7 +16,7 @@
         <span class="screen-wide">Export as...</span>
     </ToolbarItem>
     <ToolbarDivider />
-    <ToolbarItem ImageUrl="frame_source.svg" ImageAlt="Generate code">
+    <ToolbarItem ImageUrl="frame_source.svg" ImageAlt="Generate code" OnClick="OpenCodeGeneration">
         <span class="screen-wide">Generate code</span>
     </ToolbarItem>
     <ToolbarDivider />
@@ -123,6 +123,13 @@
 
         await AppState.PersistAsync();
     }
+
+    private void OpenCodeGeneration()
+    {
+        AppState.IsCodeGenerationOpen = true;
+        EventBroadcast.UpdateCodeWindow();
+    }
+    
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {

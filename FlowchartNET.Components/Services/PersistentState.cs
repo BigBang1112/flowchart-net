@@ -9,6 +9,7 @@ public sealed class PersistentState
     public Guid? SelectedSymbolId { get; set; }
     public bool IsPropertiesOpen { get; set; }
     public double Zoom { get; set; } = 0.75;
+    public Language Language { get; set; } = Language.CSharp;
 
     public List<SymbolData> Symbols { get; set; } = [];
 }

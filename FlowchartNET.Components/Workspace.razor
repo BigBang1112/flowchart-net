@@ -48,7 +48,7 @@
 
     private Dictionary<Guid, DynamicComponent> symbolComponents = new();
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         objRef = DotNetObjectReference.Create(this);
         EventBroadcast.WorkspaceUpdate += () => StateHasChanged();
@@ -60,7 +60,6 @@
             await ClearLinesAsync();
             await ConnectSymbolsFromStateAsync();
         };
-        return base.OnInitializedAsync();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

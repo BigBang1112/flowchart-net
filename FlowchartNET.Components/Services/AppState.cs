@@ -21,6 +21,8 @@ public sealed class AppState
 
     public SimulationState? Simulation { get; set; }
 
+    public bool IsCodeGenerationOpen { get; set; }
+
     public AppState(IServiceProvider serviceProvider)
     {
         this.serviceProvider = serviceProvider;

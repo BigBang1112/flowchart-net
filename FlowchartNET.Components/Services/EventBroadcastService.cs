@@ -7,6 +7,7 @@ internal sealed class EventBroadcastService
     public event Action? MenuUpdate;
     public event Action? WorkspaceUpdate;
     public event Action? PropertiesUpdate;
+    public event Action? CodeWindowUpdate;
     public event Func<SymbolData, Task>? SymbolDelete;
     public event Action<StartSymbolData>? SimulationStart;
     public event Func<Task>? FlowchartNew;
@@ -25,6 +26,11 @@ internal sealed class EventBroadcastService
     public void UpdateProperties()
     {
         PropertiesUpdate?.Invoke();
+    }
+
+    public void UpdateCodeWindow()
+    {
+        CodeWindowUpdate?.Invoke();
     }
 
     public async Task DeleteSymbolAsync(SymbolData symbol)
