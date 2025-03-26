@@ -1,3 +1,4 @@
+@using FlowchartNET.Components.CodeGenerators
 @inject AppState AppState
 @inject EventBroadcastService EventBroadcast
 @inject IJSRuntime JS
@@ -30,15 +31,25 @@
         EventBroadcast.CodeWindowUpdate += StateHasChanged;
     }
 
+    private CodeGenerator GetCodeGenerator(Language lang) => lang switch
+    {
+        Language.CSharp => new CSharpCodeGenerator(),
+        Language.Lua => new LuaCodeGenerator(),
+        _ => throw new NotImplementedException(),
+    };
+
     private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
     {
+        var language = AppState.Persistent.Language;
+
         return new StandaloneEditorConstructionOptions
         {
             Theme = "vs-dark",
             ReadOnly = true,
             AutomaticLayout = true,
             FontSize = 20,
-            Language = AppState.Persistent.Language.ToString().ToLowerInvariant(),
+            Language = language.ToString().ToLowerInvariant(),
+            Value = GenerateCode(GetCodeGenerator(language))
         };
     }
 
@@ -58,6 +69,24 @@
         }
 
         await BlazorMonaco.Editor.Global.SetModelLanguage(JS, await editor.GetModel(), lang.ToString().ToLowerInvariant());
+
+        var codeGenerator = GetCodeGenerator(lang);
+        editor?.SetValue(GenerateCode(codeGenerator));
+    }
+
+    private string? GenerateCode(CodeGenerator codeGenerator)
+    {
+        var firstStartSymbol = AppState.Persistent
+            .Symbols
+            .OfType<StartSymbolData>()
+            .FirstOrDefault();
+
+        if (firstStartSymbol is null)
+        {
+            return null;
+        }
+
+        return codeGenerator.Generate(firstStartSymbol);
     }
 
     private void Close()
