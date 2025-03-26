@@ -72,6 +72,8 @@
 
         var codeGenerator = GetCodeGenerator(lang);
         editor?.SetValue(GenerateCode(codeGenerator));
+
+        await AppState.PersistAsync();
     }
 
     private string? GenerateCode(CodeGenerator codeGenerator)
