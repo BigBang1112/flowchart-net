@@ -1,8 +1,7 @@
-﻿namespace FlowchartNET.Components.Simulation;
+﻿namespace FlowchartNET.Components.State;
 
 public sealed class SimulationState
 {
-    public Guid StartSymbolId { get; set; }
     public HashSet<Guid> CurrentSymbolIds { get; set; } = [];
     public Dictionary<Guid, HashSet<Guid>> NextSymbolIds { get; set; } = [];
     public HashSet<Guid> UsedSymbolIds { get; set; } = [];

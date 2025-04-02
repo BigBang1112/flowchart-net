@@ -1,4 +1,4 @@
-﻿using FlowchartNET.Components.Simulation;
+﻿using FlowchartNET.Components.State;
 using FlowchartNET.Components.Symbols.Edition;
 using System.Text.Json.Serialization;
 

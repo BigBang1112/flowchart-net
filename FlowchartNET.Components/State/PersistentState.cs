@@ -1,6 +1,6 @@
 ﻿using FlowchartNET.Components.Symbols.Data;
 
-namespace FlowchartNET.Components.Services;
+namespace FlowchartNET.Components.State;
 
 public sealed class PersistentState
 {

@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using FlowchartNET.Components.Simulation;
+using FlowchartNET.Components.State;
 using FlowchartNET.Components.Symbols.Data;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;

@@ -1,5 +1,5 @@
 ﻿@using FlowchartNET.Components.Events
-@using FlowchartNET.Components.Simulation
+@using FlowchartNET.Components.State
 @implements IAsyncDisposable
 
 @inject ModuleHelper ModuleHelper
@@ -387,8 +387,7 @@
         simulationCts.Dispose();
         simulationCts = new CancellationTokenSource();
 
-        var simulation = new Simulation.SimulationState();
-        simulation.StartSymbolId = startSymbol.Id;
+        var simulation = new State.SimulationState();
         simulation.CurrentSymbolIds = [startSymbol.Id];
         simulation.UsedSymbolIds = [startSymbol.Id];
         AppState.Simulation = simulation;
