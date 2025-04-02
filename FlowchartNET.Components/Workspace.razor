@@ -303,26 +303,27 @@
             {
                 currentConnectorEvent = e;
                 await module.InvokeVoidAsync("startLine", e.Element, e.Socket, AppState.Persistent.Zoom);
+                return;
             }
-            else // delete otherwise
+            
+            // delete otherwise
+
+            // Gets all symbols that are connected to the clicked symbol
+            var allConnected = AppState.Persistent.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
+
+            if (allConnected.Count == 0)
             {
-                // Gets all symbols that are connected to the clicked symbol
-                var allConnected = AppState.Persistent.Symbols.Where(x => x.GetConnectedSymbolIds().Contains(e.Symbol.Id)).ToList();
+                // Action when nothing connects to the point
+                return;
+            }
 
-                if (allConnected.Count == 0)
-                {
-                    // Action when nothing connects to the point
-                    return;
-                }
-
-                // removing is "survivable", but it would be better to first loop through the lines, select only one of them, and delete after confirming selection
-                foreach (var connectedSymbol in allConnected)
-                {
-                    var line = lines[(connectedSymbol.Id, e.Symbol.Id)];
-                    await line.InvokeVoidAsync("remove");
-                    connectedSymbol.RemoveConnection(e.Symbol.Id);
-                    lines.Remove((connectedSymbol.Id, e.Symbol.Id));
-                }
+            // removing is "survivable", but it would be better to first loop through the lines, select only one of them, and delete after confirming selection
+            foreach (var connectedSymbol in allConnected)
+            {
+                var line = lines[(connectedSymbol.Id, e.Symbol.Id)];
+                await line.InvokeVoidAsync("remove");
+                connectedSymbol.RemoveConnection(e.Symbol.Id);
+                lines.Remove((connectedSymbol.Id, e.Symbol.Id));
             }
 
             return;
