@@ -25,4 +25,20 @@ internal sealed class ModuleHelper
 
         return module;
     }
+
+    public static async ValueTask DisposeAsync(IJSObjectReference? module)
+    {
+        if (module is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
 }

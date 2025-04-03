@@ -129,19 +129,9 @@
         AppState.IsCodeGenerationOpen = true;
         EventBroadcast.UpdateCodeWindow();
     }
-    
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        if (module is not null)
-        {
-            try
-            {
-                await module.DisposeAsync();
-            }
-            catch (JSDisconnectedException)
-            {
-            }
-        }
+        await ModuleHelper.DisposeAsync(module);
     }
 }

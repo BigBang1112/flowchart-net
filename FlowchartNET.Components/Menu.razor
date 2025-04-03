@@ -3,18 +3,10 @@
 
 <menu>
     <h2 class="symbols">Symbols</h2>
-    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-terminal")">
-        <div class="shape preview"></div>
-    </MenuItem>
-    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-process")">
-        <div class="shape preview"></div>
-    </MenuItem>
-    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-io")">
-        <div class="shape preview"></div>
-    </MenuItem>
-    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-decision")">
-        <div class="shape preview"></div>
-    </MenuItem>
+    <MenuItem SymbolClass="symbol-terminal" Name="Start / End" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-terminal")"></MenuItem>
+    <MenuItem SymbolClass="symbol-process" Name="Process" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-process")"></MenuItem>
+    <MenuItem SymbolClass="symbol-io" Name="Input / Output" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-io")"></MenuItem>
+    <MenuItem SymbolClass="symbol-decision" Name="Decision" OnMouseDown="SelectItemAsync" IsSelected="@IsSelected("symbol-decision")"></MenuItem>
 </menu>
 
 @code {
@@ -27,9 +19,8 @@
 
     private bool IsSelected(string identifier) => AppState.Persistent.MenuSelectedSymbolId == identifier;
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         EventBroadcast.MenuUpdate += () => StateHasChanged();
-        return base.OnInitializedAsync();
     }
 }

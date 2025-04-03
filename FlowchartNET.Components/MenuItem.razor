@@ -5,7 +5,7 @@
     draggable="true"
     @onmousedown="() => OnMouseDown.InvokeAsync(SymbolClass)">
     <div class="symbol @SymbolClass">
-        @ChildContent
+        <div class="shape preview"></div>
         @if (!string.IsNullOrWhiteSpace(Name) && IsNameVisible)
         {
             <span>@Name</span>
@@ -47,15 +47,6 @@
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        if (module is not null)
-        {
-            try
-            {
-                await module.DisposeAsync();
-            }
-            catch (JSDisconnectedException)
-            {
-            }
-        }
+        await ModuleHelper.DisposeAsync(module);
     }
 }
