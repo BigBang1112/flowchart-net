@@ -26,10 +26,8 @@
     [Parameter, EditorRequired]
     public required StartSymbolData Data { get; set; }
 
-    Guid ISymbol.Id => Data.Id;
-    double ISymbol.X { get => Data.X; set => Data.X = value; }
-    double ISymbol.Y { get => Data.Y; set => Data.Y = value; }
     SymbolData ISymbol.Data => Data;
+
     string? ISymbol.GetSocketIn() => null;
     string? ISymbol.GetSocketOut(Guid nextSymbolId) => socket;
 

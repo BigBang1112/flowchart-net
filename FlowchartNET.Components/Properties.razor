@@ -17,6 +17,7 @@
                 @Symbol.Id
             </div>
             <DynamicComponent Type="Symbol.EditionComponentType" Parameters="GetSymbolEditionComponentParameters(Symbol)"></DynamicComponent>
+            <button class="button-fill" @onclick="() => OnDeleteAsync(Symbol)">Delete</button>
         }
     </div>
 </aside>
@@ -36,8 +37,7 @@
     private Dictionary<string, object> GetSymbolEditionComponentParameters(SymbolData data) =>
         new Dictionary<string, object>
         {
-            { "Data", data },
-            { "OnDelete", EventCallback.Factory.Create<SymbolData>(this, OnDeleteAsync) }
+            { "Data", data }
         };
 
     protected override Task OnInitializedAsync()

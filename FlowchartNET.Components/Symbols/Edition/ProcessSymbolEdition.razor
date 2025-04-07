@@ -60,14 +60,10 @@
         </tr>
     </table>
 </div>
-<button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>
 
 @code {
     [Parameter, EditorRequired]
     public required ProcessSymbolData Data { get; set; }
-
-    [Parameter, EditorRequired]
-    public EventCallback<SymbolData> OnDelete { get; set; }
 
     private string? Process
     {

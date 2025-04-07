@@ -26,14 +26,10 @@
         </tr>
     </table>
 </div>
-<button class="button-fill" @onclick="() => OnDelete.InvokeAsync(Data)">Delete</button>
 
 @code {
     [Parameter, EditorRequired]
     public required EndSymbolData Data { get; set; }
-
-    [Parameter, EditorRequired]
-    public EventCallback<SymbolData> OnDelete { get; set; }
 
     private string? DisplayName
     {
