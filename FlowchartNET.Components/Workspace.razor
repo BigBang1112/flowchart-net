@@ -7,16 +7,16 @@
 @inject EventBroadcastService EventBroadcast
 
 <main style="zoom: @((AppState.Persistent.Zoom * 100).ToString(System.Globalization.CultureInfo.InvariantCulture))%"
-@ondragover="OnDragOver"
-@onclick="OnClickAsync"
-@ondragover:preventDefault="true" 
-@onmousemove="OnMouseMoveAsync"
-@onmousedown="OnMouseDownAsync"
-@onmouseup="OnMouseUpAsync"
-@ontouchmove="OnTouchMoveAsync"
-@ontouchmove:preventDefault="true"
-@ontouchcancel="OnMouseUpAsync"
-@onscroll="OnScrollAsync">
+    @ondragover="OnDragOver"
+    @onclick="OnClickAsync"
+    @ondragover:preventDefault="true" 
+    @onmousemove="OnMouseMoveAsync"
+    @onmousedown="OnMouseDownAsync"
+    @onmouseup="OnMouseUpAsync"
+    @ontouchmove="OnTouchMoveAsync"
+    @ontouchmove:preventDefault="true"
+    @ontouchcancel="OnMouseUpAsync"
+    @onscroll="OnScrollAsync">
 
     @if (simulationTask?.Exception is not null)
     {

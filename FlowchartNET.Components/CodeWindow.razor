@@ -88,7 +88,7 @@
             return null;
         }
 
-        return codeGenerator.Generate(firstStartSymbol);
+        return codeGenerator.Generate(firstStartSymbol, AppState.Persistent.Symbols.ToDictionary(x => x.Id));
     }
 
     private void Close()
