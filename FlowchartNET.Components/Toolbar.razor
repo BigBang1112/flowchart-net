@@ -21,7 +21,7 @@
     </ToolbarItem>
     <ToolbarDivider />
     <ToolbarItem ImageUrl="sdk.svg" ImageAlt="Mode">
-        <span class="screen-medium">Mode: <b>Logical</b></span>
+        <span class="screen-medium">Mode: <b>@(AppState.Simulation is null ? "Editor" : "Simulation")</b></span>
     </ToolbarItem>
     <ToolbarItem ImageUrl="light_mode.svg" ImageAlt="Light Mode" AdditionalCssClass="align-right" OnClick="ToggleThemeAsync" />
 </div>
@@ -43,6 +43,12 @@
         toggleTheme = !toggleTheme;
 
         await module.InvokeVoidAsync("toggleTheme", toggleTheme);
+    }
+
+    protected override void OnInitialized()
+    {
+        EventBroadcast.SimulationStart += _ => StateHasChanged();
+        EventBroadcast.SimulationEnd += () => StateHasChanged();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

@@ -11,6 +11,7 @@ internal sealed class EventBroadcastService
     public event Func<Task>? ZoomUpdate;
     public event Func<SymbolData, Task>? SymbolDelete;
     public event Action<StartSymbolData>? SimulationStart;
+    public event Action? SimulationEnd;
     public event Func<Task>? FlowchartNew;
     public event Func<Task>? FlowchartLoad;
 
@@ -53,6 +54,11 @@ internal sealed class EventBroadcastService
     public void StartSimulation(StartSymbolData startSymbol)
     {
         SimulationStart?.Invoke(startSymbol);
+    }
+
+    public void EndSimulation()
+    {
+        SimulationEnd?.Invoke();
     }
 
     public async Task NewFlowchartAsync()

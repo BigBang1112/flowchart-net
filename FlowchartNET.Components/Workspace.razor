@@ -417,6 +417,7 @@
                 simulationCts.Dispose();
                 simulationCts = new CancellationTokenSource();
                 await InvokeAsync(StateHasChanged);
+                EventBroadcast.EndSimulation();
             }
         }, simulationCts.Token);
     }
