@@ -132,7 +132,7 @@ main {
     position: relative;
     overflow: auto;
     flex: 1;
-    background-color: #111;
+    transform-origin: top left;
 }
 
 aside {

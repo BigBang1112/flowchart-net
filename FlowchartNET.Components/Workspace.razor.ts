@@ -4,7 +4,7 @@ const lineSize = 4;
 
 let currentLine: any;
 
-const main = document.getElementsByTagName('main')[0];
+const main = document.getElementById("workspace");
 
 export function addHandlers(dotNetHelper: any): void {
     main.addEventListener('drop', (event: DragEvent) => {
@@ -43,13 +43,6 @@ export function getMouseX(clientX: number): number {
 export function getMouseY(clientY: number): number {
     const rect = main.getBoundingClientRect();
     return clientY - rect.top;
-}
-
-export function connect(start: HTMLElement, end: HTMLElement, startSocket: string, endSocket: string): void {
-    /*var line = new LeaderLine(start, end);
-    line.color = '#e8eaed';
-    line.setOptions({ startSocket: startSocket, endSocket: endSocket, path: 'grid' });
-    lines.push(line);*/
 }
 
 export function startLine(start: HTMLElement, startSocket: string, zoom: number): void {

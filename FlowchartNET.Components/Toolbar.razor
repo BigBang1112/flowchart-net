@@ -12,7 +12,7 @@
     <ToolbarItem ImageUrl="download.svg" ImageAlt="Save" OnClick="PromptSaveAsync" />
     <ToolbarItem ImageUrl="print.svg" ImageAlt="Print" />
     <ToolbarDivider />
-    <ToolbarItem ImageUrl="file_export.svg" ImageAlt="Export">
+    <ToolbarItem ImageUrl="file_export.svg" ImageAlt="Export" OnClick="PromptExportAsync">
         <span class="screen-wide">Export as...</span>
     </ToolbarItem>
     <ToolbarDivider />
@@ -124,6 +124,39 @@
         await AppState.PersistAsync();
     }
 
+    private async Task PromptExportAsync()
+    {
+        var fileName = await JS.InvokeAsync<string>("prompt", "Enter the file name to export the flowchart as (possible formats - 'png', 'jpg', 'svg'):", "Untitled.png");
+
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return;
+        }
+
+        ExportFormat format;
+
+        try
+        {
+            format = Path.GetExtension(fileName).ToLowerInvariant() switch
+            {
+                ".png" => ExportFormat.Png,
+                ".jpg" => ExportFormat.Jpg,
+                ".svg" => ExportFormat.Svg,
+                _ => throw new InvalidOperationException("Unsupported file format. Please use .png, .jpg, or .svg.")
+            };
+        }
+        catch (InvalidOperationException ex)
+        {
+            await JS.InvokeVoidAsync("alert", ex.Message);
+            return;
+        }
+
+        if (module is not null)
+        {
+            await module.InvokeVoidAsync("exportAsImageFormat", format.ToString().ToLowerInvariant());
+        }
+    }
+
     private void OpenCodeGeneration()
     {
         AppState.IsCodeGenerationOpen = true;
@@ -133,5 +166,12 @@
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         await ModuleHelper.DisposeAsync(module);
+    }
+
+    private enum ExportFormat
+    {
+        Png,
+        Jpg,
+        Svg
     }
 }

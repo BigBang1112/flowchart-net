@@ -16,7 +16,8 @@
     @ontouchmove="OnTouchMoveAsync"
     @ontouchmove:preventDefault="true"
     @ontouchcancel="OnMouseUpAsync"
-    @onscroll="OnScrollAsync">
+    @onscroll="OnScrollAsync"
+    id="workspace">
 
     @if (simulationTask?.Exception is not null)
     {
@@ -52,6 +53,11 @@
     {
         objRef = DotNetObjectReference.Create(this);
         EventBroadcast.WorkspaceUpdate += () => StateHasChanged();
+        EventBroadcast.ZoomUpdate += async () =>
+        {
+            await Task.Delay(20); // sometimes a desync can happen
+            await UpdateLinePositionsAsync();
+        };
         EventBroadcast.SymbolDelete += async (symbol) => await DeleteSymbolAsync(symbol);
         EventBroadcast.SimulationStart += StartSimulation;
         EventBroadcast.FlowchartNew += async () => await ClearLinesAsync();
@@ -359,7 +365,7 @@
         await AppState.PersistAsync();
     }
 
-    private async ValueTask UpdateLinePositionsAsync()
+    public async ValueTask UpdateLinePositionsAsync()
     {
         if (module is null)
         {

@@ -8,6 +8,7 @@ internal sealed class EventBroadcastService
     public event Action? WorkspaceUpdate;
     public event Action? PropertiesUpdate;
     public event Action? CodeWindowUpdate;
+    public event Func<Task>? ZoomUpdate;
     public event Func<SymbolData, Task>? SymbolDelete;
     public event Action<StartSymbolData>? SimulationStart;
     public event Func<Task>? FlowchartNew;
@@ -31,6 +32,14 @@ internal sealed class EventBroadcastService
     public void UpdateCodeWindow()
     {
         CodeWindowUpdate?.Invoke();
+    }
+
+    public async Task UpdateZoomAsync()
+    {
+        if (ZoomUpdate is not null)
+        {
+            await ZoomUpdate.Invoke();
+        }
     }
 
     public async Task DeleteSymbolAsync(SymbolData symbol)
