@@ -32,7 +32,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.4 # 9.0.5 has broken TypeScript build
+          dotnet-version: 9.0.203 # 9.0.300 has broken TypeScript build
 
       - name: Publish
         run: dotnet publish FlowchartNET -c Release -o publish
