@@ -4,13 +4,13 @@
 @inject EventBroadcastService EventBroadcast
 @inject IJSRuntime JS
 
-<div class="toolbar">
+<div class="toolbar @(toggleToolbar ? "show" : "")">
     <ToolbarItem ImageUrl="add_circle.svg" ImageAlt="New" OnClick="ConfirmNewAsync" />
     <ToolbarItem ImageUrl="folder_open.svg" ImageAlt="Open">
         <InputFile class="file" accept=".flowchart" title=" " OnChange="LoadFlowchartFile" @ref="inputFileLoad" />
     </ToolbarItem>
     <ToolbarItem ImageUrl="download.svg" ImageAlt="Save" OnClick="PromptSaveAsync" />
-    <ToolbarItem ImageUrl="print.svg" ImageAlt="Print" />
+    <ToolbarItem ImageUrl="print.svg" ImageAlt="Print" Disabled="true" />
     <ToolbarDivider />
     <ToolbarItem ImageUrl="file_export.svg" ImageAlt="Export" OnClick="PromptExportAsync">
         <span class="screen-wide">Export as...</span>
@@ -25,13 +25,14 @@
     </ToolbarItem>
     <ToolbarItem ImageUrl="light_mode.svg" ImageAlt="Light Mode" AdditionalCssClass="align-right" OnClick="ToggleThemeAsync" />
 </div>
-<ToolbarItem ImageUrl="menu.svg" ImageAlt="Menu" AdditionalCssClass="burger align-right" />
+<ToolbarItem ImageUrl="menu.svg" ImageAlt="Menu" AdditionalCssClass="burger align-right" OnClick="() => toggleToolbar = !toggleToolbar" />
 
 @code {
     private IJSObjectReference? module;
     private InputFile? inputFileLoad;
 
     private bool toggleTheme;
+    private bool toggleToolbar;
 
     private async Task ToggleThemeAsync()
     {

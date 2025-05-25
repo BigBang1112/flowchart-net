@@ -65,6 +65,13 @@ section {
         background-color: #666;
     }
 
+    .button-noborder:disabled,
+    .button-noborder.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #444 !important;
+    }
+
 .button-tech {
     display: flex;
     align-items: center;
