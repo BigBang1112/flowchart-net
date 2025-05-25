@@ -44,7 +44,7 @@ export function exportAsImageFormat(format: string): void {
 
     if (format == "png") {
         htmlToImage
-            .toPng(workspace)
+            .toPng(workspace, { skipFonts: true })
             .then((dataUrl: string) => {
                 var link = document.createElement('a');
                 link.download = "test.png";
@@ -57,7 +57,7 @@ export function exportAsImageFormat(format: string): void {
     }
     else if (format == "jpg") {
         htmlToImage
-            .toJpeg(workspace)
+            .toJpeg(workspace, { skipFonts: true })
             .then((dataUrl: string) => {
                 var link = document.createElement('a');
                 link.download = "test.jpg";
@@ -69,7 +69,7 @@ export function exportAsImageFormat(format: string): void {
     }
     else if (format == "svg") {
         htmlToImage
-            .toSvg(workspace)
+            .toSvg(workspace, { skipFonts: true })
             .then((dataUrl: string) => {
                 var link = document.createElement('a');
                 link.download = "test.svg";
