@@ -28,7 +28,7 @@ The app was integrated into Blazor WebAssembly from a Razor component library pr
 
 ## Build
 
-Make sure you have these **.NET 9 SDK** and **.NET WebAssembly Build Tools** installed.
+Make sure you have **.NET 9 SDK** and **.NET WebAssembly Build Tools** installed.
 
 In **Visual Studio 2022**, you have to install the WASM build tools additionally as well.
 
